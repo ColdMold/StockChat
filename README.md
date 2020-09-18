@@ -20,6 +20,7 @@ Mac only
     * `brew install watchman`
 
 Both (Windows and Mac)
+
 4. Install dependencies
     * `npm install`
 
