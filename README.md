@@ -3,18 +3,21 @@
 1. Install Node.js v12.18.3 
     * [Windows](https://nodejs.org/dist/v12.18.3/node-v12.18.3-x64.msi) and [Mac](https://nodejs.org/dist/v12.18.3/node-v12.18.3.pkg)
 
-2a. Install Chocolatey (Windows only)
+Windows only
+2. Install Chocolatey
     * Open PowerShell as Admin, then run the following command.
     * `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))`
-3a. Install Chocolatey Dependancies (Windows only)
+3. Install Chocolatey Dependancies (Windows only)
     * `choco install -y nodejs.install python2 openjdk8`
 
-2b. Install Homebrew (Mac only)
+Mac only
+2. Install Homebrew (Mac only)
     * `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"`
-3b. Install node and watchman
+3. Install node and watchman
     * `brew install node`
     * `brew install watchman`
 
+Both (Windows and Mac)
 4. Install dependencies
     * `npm install`
 
