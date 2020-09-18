@@ -4,6 +4,7 @@
     * [Windows](https://nodejs.org/dist/v12.18.3/node-v12.18.3-x64.msi) and [Mac](https://nodejs.org/dist/v12.18.3/node-v12.18.3.pkg)
 
 Windows only
+
 2. Install Chocolatey
     * Open PowerShell as Admin, then run the following command.
     * `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))`
@@ -11,6 +12,7 @@ Windows only
     * `choco install -y nodejs.install python2 openjdk8`
 
 Mac only
+
 2. Install Homebrew (Mac only)
     * `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"`
 3. Install node and watchman
