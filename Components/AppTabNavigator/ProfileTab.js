@@ -20,6 +20,7 @@ class ProfileTab extends Component {
         return (
             <View style={styles.container}>
                 <Text>ProfileTab</Text>
+                <Text>Hello World</Text>
             </View>
         );
     }

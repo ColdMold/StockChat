@@ -19,7 +19,7 @@ class HomeTab extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
+        this.state = { 
             isLoading: false,
             data: [],
         };

@@ -14,7 +14,7 @@ class StockTab extends Component {
 
         tabBarIcon: ({ tintColor }) => (
             <Icon name="ios-home" style={{ color: tintColor }} />
-        )
+        ) 
     }
 
     constructor(props) {
@@ -39,14 +39,16 @@ class StockTab extends Component {
     }
 
     async getHomeScreenData() {
+        let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a'
+        let companySymbol = 'AAPL'
+    
         try {
-            let api_key = 'btqadav48v6t9hdd5mag';
             let response = await fetch(
-                'https://finnhub.io/api/v1/stock/symbol?exchange=US&token='+api_key
+                `https://sandbox.iexapis.com/stable/stock/${companySymbol}/company?token=${api_key}&period=annual`
             );
             let json = await response.json();
             this.setState({
-                data: json.slice(0, 10)//only get top 10 stocks right now. (Loading problems)
+                data: json
             });
         } catch (error) {
           console.error(error);
@@ -54,7 +56,10 @@ class StockTab extends Component {
       }
 
     render() {
+        let companyName = this.state.data.companyName;
 
+        // BRING BACK THIS FORMAT WHENEVER PULLING IN A BATCH OF COMPANIES
+        /*
         let display = this.state.data.map(function (Stock, index) {
             return (
                 <View key={Stock.symbol} >
@@ -62,11 +67,13 @@ class StockTab extends Component {
                 </View>
             )
         });
+        */
 
         return (
             <Container style={styles.container}>
                 <Content style={styles.context}>
-                    {display}
+                    <Text>Stock Screen</Text>
+                    <CardComponent description={companyName} symbol={'AAPL'} />
                 </Content>
             </Container>
         );
