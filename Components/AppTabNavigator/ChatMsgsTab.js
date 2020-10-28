@@ -7,25 +7,24 @@ import {
 
 import { Icon } from 'native-base'
 
-
-class LikesTab extends Component {
+class ChatMsgsTab extends Component {
 
     static navigationOptions = {
 
         tabBarIcon: ({ tintColor }) => (
-            <Icon name="ios-heart" style={{ color: tintColor }} />
+            <Icon name="android-messages" style={{ color: tintColor }} />
         )
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <Text>LikesTab</Text>
+                <Text>Chat and Messages</Text>
             </View>
         );
     }
 }
-export default LikesTab;
+export default ChatMsgsTab;
 
 const styles = StyleSheet.create({
     container: {
