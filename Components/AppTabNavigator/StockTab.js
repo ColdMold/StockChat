@@ -19,6 +19,8 @@ class StockTab extends Component {
         super(props);
         this.state = {
             isLoading: false,
+            // companyInfo is one big object holding the arrays of company information...might need to change this behavior to maybe having an array of "Company" objects each 
+            // with their own individual properties.
             companyInfo: {
                 companyNames: [],
                 companySymbols: []
@@ -49,7 +51,6 @@ class StockTab extends Component {
         let companySymbols = companySymbolsArray.join(',').toLowerCase();
 
         const apiFetchURL = `https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbols}&token=${api_key}`
-
 
         try {
             let response = await fetch(apiFetchURL);
