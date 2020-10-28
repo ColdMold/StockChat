@@ -13,24 +13,23 @@ export default class App extends React.Component {
   render() {
     return (
       
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen> component={loginApp}</Stack.Screen>
-          {/*<Stack.Screen name="Stock Chat" component={HomeScreen} /> */}
-        </Stack.Navigator>
-      </NavigationContainer>
-      /*
      <View>
-       <loginApp/>
+       <LoginApp/>
      </View>
-     */
+/*
+    <NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen component={LoginApp} />
+    </Stack.Navigator>
+    </NavigationContainer>
+  */  
+
     );
   }
 
+  
   componentDidMount() {
-    auth()
-  .signInAnonymously()
-  .then(() => {
+    auth().signInAnonymously().then(() => {
     console.log('User signed in anonymously');
   })
   .catch(error => {
@@ -44,7 +43,7 @@ export default class App extends React.Component {
 
 }
 
-function loginApp() {
+function LoginApp() {
   // Set an initializing state whilst Firebase connects
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
@@ -71,9 +70,16 @@ function loginApp() {
   }
 
   return (
+    /*
     <View>
       <Text>Welcome {user.email}</Text>
-    </View>
+    </View>*/
+
+    <NavigationContainer>
+    <Stack.Navigator>
+      <Stack.Screen name="Stock Chat" component={HomeScreen} />
+    </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
