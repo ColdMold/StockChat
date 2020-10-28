@@ -7,24 +7,24 @@ import {
 
 import { Icon } from 'native-base'
 
-class AddMediaTab extends Component {
+class CreatePostTab extends Component {
 
     static navigationOptions = {
 
         tabBarIcon: ({ tintColor }) => (
-            <Icon name="ios-add-circle" style={{ color: tintColor }} />
+            <Icon name="create" style={{ color: tintColor }} />
         )
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <Text>AddMediaTab</Text>
+                <Text>Create A Post</Text>
             </View>
         );
     }
 }
-export default AddMediaTab;
+export default CreatePostTab;
 
 const styles = StyleSheet.create({
     container: {

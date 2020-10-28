@@ -7,25 +7,25 @@ import {
 
 import { Icon } from 'native-base'
 
-class ProfileTab extends Component {
+class ForumsTab extends Component {
 
     static navigationOptions = {
 
         tabBarIcon: ({ tintColor }) => (
-            <Icon name="person" style={{ color: tintColor }} />
+            <Icon name="forum-outline" style={{ color: tintColor }} />
         )
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <Text>ProfileTab</Text>
-                <Text>Hello World</Text>
+                <Text>Forums</Text>
             </View>
         );
     }
 }
-export default ProfileTab;
+
+export default ForumsTab;
 
 const styles = StyleSheet.create({
     container: {
