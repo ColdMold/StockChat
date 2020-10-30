@@ -4,12 +4,10 @@ import { Title } from 'react-native-paper';
 import { AuthContext } from '../Navigation/AuthProvider';
 import FormButton from './FormButton';
 import StockTab from './AppTabNavigator/StockTab'
-import SearchTab from './AppTabNavigator/SearchTab'
-import AddMediaTab from './AppTabNavigator/AddMediaTab'
-import LikesTab from './AppTabNavigator/LikesTab'
-import ProfileTab from './AppTabNavigator/ProfileTab'
-
 import { createBottomTabNavigator  } from '@react-navigation/bottom-tabs'
+import ForumsTab from './AppTabNavigator/ForumsTab';
+import CreatePostTab from './AppTabNavigator/CreatePostTab';
+import ChatMsgsTab from './AppTabNavigator/ChatMsgsTab';
 
 
 const Tab = createBottomTabNavigator();
@@ -43,10 +41,10 @@ export default function HomeScreen() {
   return (
     <Tab.Navigator>
         <Tab.Screen name="Stock" component={StockTab} />
-        <Tab.Screen name="Search" component={SearchTab} />
-        <Tab.Screen name="Add Media" component={AddMediaTab} />
-        <Tab.Screen name="Likes" component={LikesTab} />
-        <Tab.Screen name="Profile" component={Logout} />
+        <Tab.Screen name="Forums" component={ForumsTab} />
+        <Tab.Screen name="Create Post" component={CreatePostTab} />
+        <Tab.Screen name="Chat / Messages" component={ChatMsgsTab} />
+        <Tab.Screen name="Logout" component={Logout} />
     </Tab.Navigator>
 );
 }
