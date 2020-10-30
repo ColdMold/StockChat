@@ -14,7 +14,7 @@ class SearchTab extends Component {
     static navigationOptions = {
 
         tabBarIcon: ({ tintColor }) => (
-            <Icon name="beer" style={{ color: tintColor }} />
+            <Icon name="search1" style={{ color: tintColor }} />
         )
     }
 

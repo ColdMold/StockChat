@@ -13,7 +13,7 @@ class HomeTab extends Component {
     static navigationOptions = {
 
         tabBarIcon: ({ tintColor }) => (
-            <Icon name="ios-home" style={{ color: tintColor }} />
+            <Icon name="android-home" style={{ color: tintColor }} />
         )
     }
 
@@ -53,7 +53,6 @@ class HomeTab extends Component {
       }
 
     render() {
-
         let display = this.state.data.map(function (Post, index) {
             return (
                 <View key={Post.taken_at_timestamp} style={styles.view}>
