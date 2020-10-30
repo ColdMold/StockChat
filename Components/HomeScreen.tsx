@@ -22,7 +22,6 @@ const Tab = createBottomTabNavigator();
 
 
 class MainScreen extends Component {
-
     static navigationOptions = {
 
         //headerLeft: <Icon name="ios-camera-outline" style={{ paddingLeft: 10 }} />,

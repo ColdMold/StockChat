@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "253288909129",
+    "firebase_url": "https://stockchat-27c31.firebaseio.com",
+    "project_id": "stockchat-27c31",
+    "storage_bucket": "stockchat-27c31.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:253288909129:android:76a592ecf001c44034f298",
+        "android_client_info": {
+          "package_name": "com.stockchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "253288909129-q5uimoih7f8cso9uea6cmm70sc34sjpg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.stockchat",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "253288909129-018v6ss9aip88eib16oqv9nkv6jbffuu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1qHDbIpcsXXdZ_d-k0aDAhKss2JSpyv8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "253288909129-018v6ss9aip88eib16oqv9nkv6jbffuu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
