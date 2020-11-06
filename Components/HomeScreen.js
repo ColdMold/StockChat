@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Title } from 'react-native-paper';
 import { AuthContext } from '../Navigation/AuthProvider';
 import FormButton from './FormButton';
-import StockTab from './AppTabNavigator/StockTab'
+import StocksTab from './AppTabNavigator/StocksTab'
 import SearchTab from './AppTabNavigator/SearchTab'
 
 import { createBottomTabNavigator  } from '@react-navigation/bottom-tabs'
@@ -18,7 +18,6 @@ export default function HomeScreen() {
   const { user, logout } = useContext(AuthContext);
 
   navigationOptions = {
-
     //headerLeft: <Icon name="ios-camera-outline" style={{ paddingLeft: 10 }} />,
     title: "Stock Chat",
     //headerRight: <Icon style={{ paddingRight: 10 }} name="ios-send-outline" />
@@ -41,11 +40,11 @@ export default function HomeScreen() {
 
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Stock" component={StockTab}/>
+      <Tab.Screen name="Stock" component={StocksTab}/>
       <Tab.Screen name="Forums" component={ForumsTab}/>
       <Tab.Screen name="Create Post" component={CreatePostTab} />
       <Tab.Screen name="Chat / Messages" component={ChatMsgsTab} />
-      <Tab.Screen name="Search" component={SearchTab} />
+      <Tab.Screen name="Profile" component={Logout} />
     </Tab.Navigator>
 );
 }

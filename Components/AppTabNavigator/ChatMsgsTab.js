@@ -10,7 +10,6 @@ import { Icon } from 'native-base'
 class ChatMsgsTab extends Component {
 
     static navigationOptions = {
-
         tabBarIcon: ({ tintColor }) => (
             <Icon name="android-messages" style={{ color: tintColor }} />
         )
