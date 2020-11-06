@@ -2,8 +2,9 @@ import React from 'react';
 import { StyleSheet, Text, View, Button, LayoutAnimation} from 'react-native';
 
 import { Provider as PaperProvider } from 'react-native-paper';
-import { AuthProvider } from './Navigation/AuthProvider';
-import Routes from './Navigation/Routes';
+//import { AuthProvider } from './Navigation/AuthProvider';
+//import Routes from './Navigation/Routes';
+import Providers from './Navigation/index';
 
 //const Stack = createStackNavigator();
 
