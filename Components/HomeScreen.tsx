@@ -6,7 +6,7 @@ import {
     Platform
 } from "react-native";
 
-import StockTab from './AppTabNavigator/StockTab'
+import StocksTab from './AppTabNavigator/StocksTab'
 import SearchTab from './AppTabNavigator/SearchTab'
 import CreatePostTab from './AppTabNavigator/CreatePostTab'
 import ForumsTab from './AppTabNavigator/ForumsTab'
@@ -23,7 +23,6 @@ const Tab = createBottomTabNavigator();
 
 class MainScreen extends Component {
     static navigationOptions = {
-
         //headerLeft: <Icon name="ios-camera-outline" style={{ paddingLeft: 10 }} />,
         title: "Stock Chat",
         //headerRight: <Icon style={{ paddingRight: 10 }} name="ios-send-outline" />
@@ -32,7 +31,7 @@ class MainScreen extends Component {
     render() {
         return (
                 <Tab.Navigator>
-                    <Tab.Screen name="Stock" component={StockTab}/>
+                    <Tab.Screen name="Stock" component={StocksTab}/>
                     <Tab.Screen name="Forums" component={ForumsTab}/>
                     <Tab.Screen name="Create Post" component={CreatePostTab} />
                     <Tab.Screen name="Chat / Messages" component={ChatMsgsTab} />

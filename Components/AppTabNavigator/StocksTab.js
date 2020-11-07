@@ -1,17 +1,19 @@
 import React, { Component } from "react";
+import { Card } from 'react-native-paper';
+
 import {
     View,
     Text,
     StyleSheet
 } from "react-native";
 
-import { Card, Container, Content, Icon } from 'native-base'
-import CardComponent from '../CardComponent'
+import { Container, Content, Icon } from 'native-base'
+import { useNavigation } from "@react-navigation/native";
 
-class StockTab extends Component {
+class StocksTab extends Component {
     static navigationOptions = {
         tabBarIcon: ({ tintColor }) => (
-            <Icon name="ios-home" style={{ color: tintColor }} />
+            <Icon name="android-home" style={{ color: tintColor }} />
         ) 
     }
 
@@ -74,32 +76,45 @@ class StockTab extends Component {
         }
       }
 
+    navigateToPage = (companySymbol, companyName) => {
+        const { navigation } = this.props;
+        console.log(companySymbol + " | " + companyName);
+        
+        navigation.navigate('StockPage', {
+            companySymbol: companySymbol,
+            companyName: companyName
+        });
+    }
+
     render() {
         // Use state because for some reason passing it in and accessing directly using array was undefined
         // State updates after the code runs. Will need to do more reading on using update callback or componentDidMount / Update.
         let companyNames = this.state.companyInfo.companyNames;
         let companySymbols = this.state.companyInfo.companySymbols;
 
+        let _this = this;
+
         let display = companyNames.map(function (companyName, index) {
             const companySymbol = companySymbols[index];
             return (
                 <View key={companySymbol}>
-                    <CardComponent description={companyName} symbol={companySymbol}></CardComponent>
+                    <Card style={styles.card} onPress={() => _this.navigateToPage(companySymbol, companyName)}>
+                        <Card.Title title={companySymbol} subtitle={companyName}/>
+                    </Card>
                 </View>
             )
-        })
+        });
 
         return (
             <Container style={styles.container}>
                 <Content style={styles.context}>
-                    <Text>Stock Screen</Text>
                     {display}
                 </Content>
             </Container>
         );
     }
 }
-export default StockTab;
+export default StocksTab;
 
 const styles = StyleSheet.create({
     container: {
@@ -112,5 +127,9 @@ const styles = StyleSheet.create({
     },
     view:{
         flex: 1
+    },
+    card: {
+        borderWidth: 3,
+        margin: 2
     }
 });
