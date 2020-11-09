@@ -31,6 +31,14 @@ export const AuthProvider = ({ children }) => {
             } catch (e) {
               console.error(e);
             }
+          },
+          forgotPass: async (email) => {
+            try {
+              await auth().sendPasswordResetEmail(email);
+              console.log("email sent");
+            } catch (e) {
+              console.error(e);
+            }
           }
         }}
       >
