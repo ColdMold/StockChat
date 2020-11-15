@@ -38,6 +38,8 @@ export const AuthProvider = ({ children }) => {
               console.log("email sent");
             } catch (e) {
               console.error(e);
+              //can we use react components here to display error?
+              //or do we need to pass errors as part of the state to get access to them in the different screens?
             }
           }
         }}
