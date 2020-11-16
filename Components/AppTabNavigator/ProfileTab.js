@@ -2,9 +2,7 @@ import React, { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Title } from 'react-native-paper';
 import FormButton from '../FormButton';
-
-//SHOULD THIS NOT WORK??
-import { AuthContext } from '.../Navigation/AuthProvider';
+import { AuthContext } from '../../Navigation/AuthProvider';
 
 
 
@@ -13,14 +11,14 @@ export default function ProfileTab({ navigation }) {
     
     return (
         <View style={styles.container}>
-          <Title>{user.uid}</Title>
+          <Title>Welcome {user.email}</Title>
           <FormButton
             title='Logout'
             modeValue='contained'
             labelStyle={styles.loginButtonLabel}
             onPress={() => {
                 logout();
-                navigation.navigate('Login');
+                //navigation.navigate('Login');
                 //might not need navigation, logout should auto go back to login screen
                 //cant test until I get import statement fixed..
             }}
