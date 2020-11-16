@@ -24,21 +24,6 @@ export default function HomeScreen() {
     //headerRight: <Icon style={{ paddingRight: 10 }} name="ios-send-outline" />
 }
 
-  function Logout() {
-    return(
-      <View style={styles.container}>
-      <Title>Home Screen</Title>
-      <Title>All chat rooms will be listed here</Title>
-      <Title>{user.uid}</Title>
-      <FormButton
-        modeValue='contained'
-        title='Logout'
-        onPress={() => logout()}
-      />
-    </View>
-    );
-}
-
   return (
     <Tab.Navigator>
       <Tab.Screen name="Stock" component={StocksTab}/>

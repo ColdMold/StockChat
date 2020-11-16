@@ -4,8 +4,6 @@ import { Title } from 'react-native-paper';
 import FormButton from '../FormButton';
 import { AuthContext } from '../../Navigation/AuthProvider';
 
-
-
 export default function ProfileTab({ navigation }) {
     const { logout, user } = useContext(AuthContext);
     
