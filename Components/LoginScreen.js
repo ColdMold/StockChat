@@ -38,6 +38,13 @@ export default function LoginScreen({ navigation }) {
           labelStyle={styles.navButtonText}
           onPress={() => navigation.navigate('Signup')}
         />
+        <FormButton
+          title='Forgot password?'
+          modeValue='text'
+          uppercase={false}
+          labelStyle={styles.navButtonText}
+          onPress={() => navigation.navigate('ForgotPassword')}
+        />
       </View>
     );
   }

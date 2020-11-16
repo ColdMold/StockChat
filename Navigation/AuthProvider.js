@@ -31,6 +31,16 @@ export const AuthProvider = ({ children }) => {
             } catch (e) {
               console.error(e);
             }
+          },
+          forgotPass: async (email) => {
+            try {
+              await auth().sendPasswordResetEmail(email);
+              console.log("email sent");
+            } catch (e) {
+              console.error(e);
+              //can we use react components here to display error?
+              //or do we need to pass errors as part of the state to get access to them in the different screens?
+            }
           }
         }}
       >

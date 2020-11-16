@@ -10,6 +10,7 @@ import { createBottomTabNavigator  } from '@react-navigation/bottom-tabs'
 import ForumsTab from './AppTabNavigator/ForumsTab';
 import CreatePostTab from './AppTabNavigator/CreatePostTab';
 import ChatMsgsTab from './AppTabNavigator/ChatMsgsTab';
+import ProfileTab from './AppTabNavigator/ProfileTab';
 
 
 const Tab = createBottomTabNavigator();
@@ -23,28 +24,13 @@ export default function HomeScreen() {
     //headerRight: <Icon style={{ paddingRight: 10 }} name="ios-send-outline" />
 }
 
-  function Logout() {
-    return(
-      <View style={styles.container}>
-      <Title>Home Screen</Title>
-      <Title>All chat rooms will be listed here</Title>
-      <Title>{user.uid}</Title>
-      <FormButton
-        modeValue='contained'
-        title='Logout'
-        onPress={() => logout()}
-      />
-    </View>
-    );
-}
-
   return (
     <Tab.Navigator>
       <Tab.Screen name="Stock" component={StocksTab}/>
       <Tab.Screen name="Forums" component={ForumsTab}/>
       <Tab.Screen name="Create Post" component={CreatePostTab} />
       <Tab.Screen name="Chat / Messages" component={ChatMsgsTab} />
-      <Tab.Screen name="Profile" component={Logout} />
+      <Tab.Screen name="Profile" component={ProfileTab} /> 
     </Tab.Navigator>
 );
 }
