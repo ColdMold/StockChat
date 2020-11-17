@@ -4,6 +4,10 @@ import { GiftedChat } from 'react-native-gifted-chat';
 
 export default function ChatRoom(props) {
     const [messages, setMessages] = useState([]);
+
+    // pull this id from firebase in a central location state, so we don't
+    // end up calling user id multiple times for each different chat room
+    //_id: firebase.auth().currentUser...
     const [userId, fetchUserId] = useState("");
 
     /* MESSAGES CLASS used by GiftedChat
@@ -24,6 +28,14 @@ export default function ChatRoom(props) {
         quickReplies?: QuickReplies --> IDK, probably don't need
     */
 
+    // ONE IDEA: every time we call from firebase, log 
+    // WHAT we're grabbing (console.log('fetching user id from firebase auth'))
+    // So we can see if we do things a redundant amount of times
+    const getUserId = () => {
+      console.log('getting user id in ChatRoom from: ' + 'firebase.auth()');
+      return firebase.auth().currentUser.getIdToken();
+    }
+
     useEffect(() => {
         // here, we will pull previous messages using setMessages. For now,
         // go with default implementation
@@ -43,14 +55,6 @@ export default function ChatRoom(props) {
         fetchUserId(getUserId());
       }, []);
 
-      // ONE IDEA: every time we call from firebase, log 
-      // WHAT we're grabbing (console.log('fetching user id from firebase auth'))
-      // So we can see if we do things a redundant amount of times
-      const getUserId = () => {
-        console.log('getting user id in ChatRoom from: ' + 'firebase.auth()');
-        return firebase.auth().currentUser.getIdToken();
-      }
-
       // This is what is used when send is pressed. We will have to
       // on successful send, upload the message to the database
       const onSend = useCallback((message = []) => {
@@ -65,12 +69,6 @@ export default function ChatRoom(props) {
           messages={messages}
           onSend={messages => onSend(messages)}
           user={{
-            // pull this id from firebase in a central location state, so we don't
-            // end up calling user id multiple times for each different chat room
-            //_id: firebase.auth().currentUser.email
-            // ONE IDEA: every time we call from firebase, log 
-              // WHAT we're grabbing (console.log('fetching user id from firebase auth'))
-              // So we can see if we do things a redundant amount of times
             _id: userId
           }}
         />
