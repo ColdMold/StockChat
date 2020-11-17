@@ -6,7 +6,7 @@ import {
 } from "react-native";
 
 import { Container, Content, Icon } from 'native-base'
-import { List, Title, Divider } from "react-native-paper";
+import { List, Title, Divider, Snackbar } from "react-native-paper";
 
 class ChatMsgsTab extends Component {
     static navigationOptions = {
@@ -49,6 +49,18 @@ class ChatMsgsTab extends Component {
     chatRoomPressed(symbol) {
         // Will open up to chat room view.
         console.log("Opening " + symbol + " Chat Room");
+
+        const { navigation } = this.props;
+
+        navigation.navigate('ChatRoom');
+
+        /*
+            return(
+                <div>
+                    <ChatRoomComponent message={symbol}/>
+                </div>
+            );
+      */
     }
 }
 export default ChatMsgsTab;

@@ -8,7 +8,6 @@ import {
 } from "react-native";
 
 import { Container, Content, Icon } from 'native-base'
-import { useNavigation } from "@react-navigation/native";
 
 class StocksTab extends Component {
     static navigationOptions = {
