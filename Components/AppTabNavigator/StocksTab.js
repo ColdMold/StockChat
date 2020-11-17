@@ -34,7 +34,7 @@ class StocksTab extends Component {
         //NetInfo.isConnected.fetch().then(isConnected => {
             if (true) {
                 this.setState({isConnected: true})
-                this.getHomeScreenData();
+                this.getStockCardData();
             } else {
                 this.setState({
                     isLoading: false
@@ -43,7 +43,7 @@ class StocksTab extends Component {
         //})
     }
 
-    async getHomeScreenData() {
+    async getStockCardData() {
         // Hard coded api_key. Not sure if we will need to change this.
         let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a'
 
