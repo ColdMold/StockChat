@@ -11,7 +11,9 @@ export default function AppStack() {
     <Stack.Navigator>
       <Stack.Screen name='Stock Chat' component={HomeScreen} />
       <Stack.Screen name='StockPage' component={StockPage} />
-      <Stack.Screen name='ChatRoom' component={ChatRoom} />
+      <Stack.Screen name='ChatRoom' component={ChatRoom} options={({ route }) => ({
+        title: `${route.params.companySymbol} Chat Room`
+      })}/>
     </Stack.Navigator>
   );
 }
