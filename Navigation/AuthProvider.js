@@ -4,7 +4,7 @@ import auth, { firebase } from '@react-native-firebase/auth';
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(null);  
   
     return (
       <AuthContext.Provider

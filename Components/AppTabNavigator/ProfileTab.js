@@ -5,17 +5,17 @@ import FormButton from '../FormButton';
 import FormInput from '../FormInput';
 import { AuthContext } from '../../Navigation/AuthProvider';
 import auth, { firebase } from '@react-native-firebase/auth';
+import Toast from 'react-native-simple-toast';
 
 export default function ProfileTab({ navigation }) {
     const { logout, user } = useContext(AuthContext);
     const [userPassword, setUserPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
 
+
     reaunthenticate = (currentPassword) => {
       let user = firebase.auth().currentUser;
       let cred = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
-      //return user.reaunthenticateWithCredential(cred);
-      //return user.reaunthenticateWithCredential(cred);
       return user.reauthenticateWithCredential(cred);
     }
 
@@ -25,9 +25,11 @@ export default function ProfileTab({ navigation }) {
         user.updatePassword(newPassword).then(() => {
         }).catch((error) => {
           console.log(error);
+          //Toast.showWithGravity(error, Toast.TOP);
         });
       }).catch((error) => {
         console.log(error);
+        //Toast.showWithGravity(error, Toast.TOP);
       })
     }
     return (
@@ -53,7 +55,7 @@ export default function ProfileTab({ navigation }) {
                 try {
                   changePassword(userPassword, newPassword);
                 } catch(error) {
-                  console.warn(error);
+                  //Toast.showWithGravity(error, Toast.TOP);
                 }
                 //navigation.navigate('Login');
                 //might not need navigation, logout should auto go back to login screen
