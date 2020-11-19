@@ -1,7 +1,8 @@
 import {firebase} from '@react-native-firebase/auth';
 import React, {useState, useEffect, useCallback} from 'react';
-import {GiftedChat} from 'react-native-gifted-chat';
+import {Bubble, GiftedChat} from 'react-native-gifted-chat';
 import database from '@react-native-firebase/database';
+import {View, Text} from 'react-native';
 
 export default function ChatRoom(props) {
   const [messages, setMessages] = useState([]);
@@ -42,57 +43,40 @@ export default function ChatRoom(props) {
   };
 
   useEffect(() => {
-    // here, we will pull previous messages using setMessages. For now,
-    // go with default implementation
-    // NOTE: This will call set messages each time we leave the screen
-    // Might be useful to store messages in global state at some point
-
+    // Gets User ID
     fetchUserId(getUserId());
 
-    let sortedLoadedMessages = [];
-
-    loadMessages((loadedMessages) => {
-      sortedLoadedMessages.push(loadedMessages);
-
-      if (sortedLoadedMessages.length < 1) {
-        setMessages([
-          {
-            _id: 1,
-            text: `Welcome to the ${companySymbol} Chat Room!`,
-            createdAt: new Date(),
-            user: {
-              _id: 0,
-              name: 'React Native',
-              avatar: 'https://placeimg.com/140/140/any',
-            },
-          },
-        ]);
-      } else {
-        sortedLoadedMessages.sort(
-          (message1, message2) => message2.createdAt - message1.createdAt,
-        );
-
-        setMessages(sortedLoadedMessages);
-      }
-    });
-  }, [companySymbol]);
-
-  // https://github.com/FaridSafi/ChatApp/blob/master/src/components/Chat.js
-  const loadMessages = (callback) => {
-    console.log(`${companySymbol} Chat Room Loading Messages`);
     const messagesRef = firebase.database().ref(`${companySymbol}Messages`);
+    messagesRef.off();
+
+    let loadedMessages = [];
+
+    loadMessages(messagesRef, loadedMessages);
+
+    return () => {
+      console.log('useEffect Return:');
+      messagesRef.off();
+    };
+  }, []);
+
+  const loadMessages = async (messagesRef, loadedMessages) => {
     messagesRef.off();
     const onReceive = (data) => {
       const message = data.val();
-      callback({
-        _id: data.key,
+      const iMessage = {
+        _id: message._id,
         text: message.text,
         createdAt: new Date(message.createdAt),
         user: {
           _id: message.user._id,
           name: message.user.name,
         },
-      });
+      };
+      loadedMessages.push(iMessage);
+      loadedMessages.sort(
+        (message1, message2) => message2.createdAt - message1.createdAt,
+      );
+      setMessages(loadedMessages);
     };
     messagesRef.on('child_added', onReceive);
   };
@@ -118,15 +102,44 @@ export default function ChatRoom(props) {
           createdAt: `${message[0].createdAt}`,
           user: {
             _id: userId,
+            name: 'testUsername',
           },
         })
+        // Remove logging here
         .then(() => console.log(message));
     },
     [companySymbol, userId],
   );
 
+  const renderBubble = (bubbleProps) => {
+    // let username = props.currentMessage.user.name;
+
+    return (
+      <View>
+        <Bubble
+          {...bubbleProps}
+          textStyle={{
+            left: {
+              color: 'white',
+            },
+            right: {
+              color: 'white',
+            },
+          }}
+          wrapperStyle={{
+            left: {
+              backgroundColor: '#535150',
+            },
+          }}
+        />
+      </View>
+    );
+  };
+
   return (
     <GiftedChat
+      renderUsernameOnMessage={true}
+      renderBubble={(bubbleSettings) => renderBubble(bubbleSettings)}
       messages={messages}
       onSend={(message) => onSend(message)}
       user={{
