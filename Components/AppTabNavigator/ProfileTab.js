@@ -12,10 +12,11 @@ export default function ProfileTab({ navigation }) {
     const [newPassword, setNewPassword] = useState('');
 
     reaunthenticate = (currentPassword) => {
+      let user = firebase.auth().currentUser;
       let cred = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
       //return user.reaunthenticateWithCredential(cred);
       //return user.reaunthenticateWithCredential(cred);
-      return user.rea
+      return user.reauthenticateWithCredential(cred);
     }
 
     changePassword = (currentPassword, newPassword) => {
