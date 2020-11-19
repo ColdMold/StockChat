@@ -9,7 +9,7 @@ export default function ProfileTab({ navigation }) {
     
     return (
         <View style={styles.container}>
-          <Title>Welcome {user.email}</Title>
+          <Title>Welcome {user.displayName}</Title>
           <FormButton
             title='Logout'
             modeValue='contained'
