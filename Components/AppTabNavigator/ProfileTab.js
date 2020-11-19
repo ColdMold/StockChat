@@ -23,7 +23,6 @@ export default function ProfileTab({ navigation }) {
       this.reaunthenticate(currentPassword).then(() => {
         let user = firebase.auth().currentUser;
         user.updatePassword(newPassword).then(() => {
-          console.log("Password updated");
         }).catch((error) => {
           console.log(error);
         });
@@ -51,8 +50,11 @@ export default function ProfileTab({ navigation }) {
             modeValue='contained'
             labelStyle={styles.loginButtonLabel}
             onPress={() => {
-                changePassword(userPassword, newPassword);
-                console.log("password updated");
+                try {
+                  changePassword(userPassword, newPassword);
+                } catch(error) {
+                  console.warn(error);
+                }
                 //navigation.navigate('Login');
                 //might not need navigation, logout should auto go back to login screen
             }}
@@ -65,7 +67,6 @@ export default function ProfileTab({ navigation }) {
                 logout();
                 //navigation.navigate('Login');
                 //might not need navigation, logout should auto go back to login screen
-                //cant test until I get import statement fixed..
             }}
           />
         </View>
