@@ -34,13 +34,13 @@ export default function ProfileTab({ navigation }) {
         <View style={styles.container}>
           <Title>Welcome {user.displayName}</Title>
           <FormInput
-          labelName='currentPassword'
+          labelName='Current Password'
           value={userPassword}
           autoCapitalize='none'
           onChangeText={userPassword => setUserPassword(userPassword)}
         />
         <FormInput
-          labelName='newPassword'
+          labelName='New Password'
           value={newPassword}
           autoCapitalize='none'
           onChangeText={newPassword => setNewPassword(newPassword)}
