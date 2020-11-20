@@ -5,7 +5,7 @@ export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);  
-  
+
     return (
       <AuthContext.Provider
         value={{
@@ -24,13 +24,9 @@ export const AuthProvider = ({ children }) => {
                 if(userCredentials.user) {
                   userCredentials.user.updateProfile({
                     displayName: username
-                  }).then(firebase.auth().currentUser.reload());
-                  console.log(user.email);
-                  console.log(user.displayName);
+                  });
                 }
               });
-              console.log(user.email);
-              console.log(user.displayName);
             } catch (e) {
               console.log(e);
             }

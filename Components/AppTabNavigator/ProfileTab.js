@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Title } from 'react-native-paper';
 import FormButton from '../FormButton';
@@ -8,10 +8,18 @@ import auth, { firebase } from '@react-native-firebase/auth';
 import Toast from 'react-native-simple-toast';
 
 export default function ProfileTab({ navigation }) {
-    const { logout, user } = useContext(AuthContext);
+    const { logout, user, setUser } = useContext(AuthContext);
     const [userPassword, setUserPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
 
+    function onAuthStateChanged(user) {
+      setUser(user);
+    }
+  
+    useEffect(() => {
+      const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+      return subscriber; // unsubscribe on unmount
+    }, [user]);
 
     reaunthenticate = (currentPassword) => {
       let user = firebase.auth().currentUser;
@@ -32,6 +40,8 @@ export default function ProfileTab({ navigation }) {
         //Toast.showWithGravity(error, Toast.TOP);
       })
     }
+
+  
     return (
         <View style={styles.container}>
           <Title>Welcome {user.displayName}</Title>
@@ -56,6 +66,7 @@ export default function ProfileTab({ navigation }) {
                   changePassword(userPassword, newPassword);
                 } catch(error) {
                   //Toast.showWithGravity(error, Toast.TOP);
+                  console.log(error);
                 }
                 //navigation.navigate('Login');
                 //might not need navigation, logout should auto go back to login screen
