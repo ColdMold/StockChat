@@ -1,45 +1,32 @@
-import React from 'react';
-import {Component} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {Container, Content} from 'native-base';
 import {Title} from 'react-native-paper';
 
-class StockPage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      companySymbol: '',
-      companyName: '',
-    };
-  }
+export default function StockPage(props) {
+  const [companySymbol, setCompanySymbol] = useState('');
+  const [companyName, setCompanyName] = useState('');
 
-  componentDidMount() {
-    const {companySymbol, companyName} = this.props.route.params;
-    if (true) {
-      this.setState({
-        companySymbol: companySymbol,
-        companyName: companyName,
-      });
-    }
-  }
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: 'white',
+    },
+  });
 
-  render() {
-    return (
-      <Container style={styles.container}>
-        <Content>
-          <Title>
-            {this.state.companySymbol} : {this.state.companyName}
-          </Title>
-        </Content>
-      </Container>
-    );
-  }
+  useEffect(() => {
+    const {companySymbol, companyName} = props.route.params;
+    setCompanySymbol(companySymbol);
+    setCompanyName(companyName);
+  }, []);
+
+  return (
+    <Container style={styles.container}>
+      <Content>
+        <Title>
+          {companySymbol} : {companyName}
+        </Title>
+      </Content>
+    </Container>
+  );
 }
-export default StockPage;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-});
