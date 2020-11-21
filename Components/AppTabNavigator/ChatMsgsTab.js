@@ -3,6 +3,7 @@ import {View, StyleSheet} from 'react-native';
 
 import {Container, Content, Icon} from 'native-base';
 import {List, Title, Divider} from 'react-native-paper';
+import {HARDCODED_COMPANY_SYMBOLS_ARRAY} from '../../Components/Utils/Constants';
 
 class ChatMsgsTab extends Component {
   static navigationOptions = {
@@ -38,7 +39,7 @@ class ChatMsgsTab extends Component {
 
   getChatRooms() {
     // TODO: Get this from a central location (same as everywhere else)
-    let companySymbolsArray = ['AAPL', 'TSLA', 'IBM', 'MSFT', 'NET'];
+    let companySymbolsArray = HARDCODED_COMPANY_SYMBOLS_ARRAY;
     return companySymbolsArray;
   }
 

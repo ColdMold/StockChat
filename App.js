@@ -1,24 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, LayoutAnimation} from 'react-native';
+import {StyleSheet, Text, View, Button, LayoutAnimation} from 'react-native';
 
 import Providers from './Navigation/index';
 
 export default class App extends React.Component {
-
-  componentDidMount() {
-    
-  }
+  componentDidMount() {}
 
   render() {
-   return (
-    <Providers/>
-  );
-    
+    return <Providers />;
   }
-  
-
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -28,4 +19,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-

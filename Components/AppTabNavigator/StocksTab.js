@@ -4,6 +4,7 @@ import {Card} from 'react-native-paper';
 import {View, StyleSheet} from 'react-native';
 
 import {Container, Content, Icon} from 'native-base';
+import {HARDCODED_COMPANY_SYMBOLS_ARRAY} from '../Utils/Constants';
 
 class StocksTab extends Component {
   static navigationOptions = {
@@ -37,7 +38,7 @@ class StocksTab extends Component {
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
 
     // Array of company symbols. Ideally we will get this information from the user's liked / purchased stocks.
-    let companySymbolsArray = ['AAPL', 'TSLA', 'IBM', 'MSFT', 'NET'];
+    let companySymbolsArray = HARDCODED_COMPANY_SYMBOLS_ARRAY;
 
     let companySymbols = companySymbolsArray.join(',').toLowerCase();
 

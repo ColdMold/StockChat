@@ -4,27 +4,26 @@ import HomeScreen from '../Components/HomeScreen';
 import StockPage from '../Components/StockPage';
 import ChatRoom from '../Components/Chat/ChatRoom';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import {TAB_NAMES} from '../Components/Utils/Constants';
 
 const Stack = createStackNavigator();
 
 export default function AppStack() {
-  let companySymbolsArray = ['AAPL', 'TSLA', 'IBM', 'MSFT', 'NET'];
-
   // Allows us to change header title based on the page we are on
   // Can expand this to header contents later
   const getHeaderTitle = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route) ?? 'Stocks';
 
     switch (routeName) {
-      case 'Stocks':
+      case TAB_NAMES.stocks:
         return 'Your Stocks';
-      case 'Forums':
+      case TAB_NAMES.forums:
         return 'Forums';
-      case 'Create Post':
+      case TAB_NAMES.createPost:
         return 'Create A Post';
-      case 'Chat / Messages':
+      case TAB_NAMES.chatMsgs:
         return 'Your Message Rooms';
-      case 'Profile':
+      case TAB_NAMES.profile:
         return 'Profile';
     }
   };
@@ -37,11 +36,8 @@ export default function AppStack() {
         options={({route}) => ({
           headerTitle: getHeaderTitle(route),
         })}
-        screenProps={{
-          companies: companySymbolsArray,
-        }}
       />
-      <Stack.Screen name="StockPage" component={StockPage}/>
+      <Stack.Screen name="StockPage" component={StockPage} />
       <Stack.Screen
         name="ChatRoom"
         component={ChatRoom}

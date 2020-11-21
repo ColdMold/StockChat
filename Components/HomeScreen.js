@@ -1,8 +1,6 @@
 import React, {useContext} from 'react';
-import {View, StyleSheet} from 'react-native';
-import {Title} from 'react-native-paper';
+import {StyleSheet} from 'react-native';
 import {AuthContext} from '../Navigation/AuthProvider';
-import FormButton from './FormButton';
 import StocksTab from './AppTabNavigator/StocksTab';
 import SearchTab from './AppTabNavigator/SearchTab';
 
@@ -11,25 +9,24 @@ import ForumsTab from './AppTabNavigator/ForumsTab';
 import CreatePostTab from './AppTabNavigator/CreatePostTab';
 import ChatMsgsTab from './AppTabNavigator/ChatMsgsTab';
 import ProfileTab from './AppTabNavigator/ProfileTab';
+import {HARDCODED_COMPANY_SYMBOLS_ARRAY, TAB_NAMES} from './Utils/Constants';
 
 const Tab = createBottomTabNavigator();
 
-export default function HomeScreen() {
+export default function HomeScreen(props) {
   const {user, logout} = useContext(AuthContext);
+  const companySymbolsArray = HARDCODED_COMPANY_SYMBOLS_ARRAY;
 
   return (
-    <Tab.Navigator>
-      <Tab.Screen
-        name="Stocks"
-        component={StocksTab}
-        options={{
-          title: 'Stocks',
-        }}
-      />
-      <Tab.Screen name="Forums" component={ForumsTab} />
-      <Tab.Screen name="Create Post" component={CreatePostTab} />
-      <Tab.Screen name="Chat / Messages" component={ChatMsgsTab} />
-      <Tab.Screen name="Profile" component={ProfileTab} />
+    <Tab.Navigator
+      screenProps={{
+        companySymbolsArray: companySymbolsArray,
+      }}>
+      <Tab.Screen name={TAB_NAMES.stocks} component={StocksTab} />
+      <Tab.Screen name={TAB_NAMES.forums} component={ForumsTab} />
+      <Tab.Screen name={TAB_NAMES.createPost} component={CreatePostTab} />
+      <Tab.Screen name={TAB_NAMES.chatMsgs} component={ChatMsgsTab} />
+      <Tab.Screen name={TAB_NAMES.profile} component={ProfileTab} />
     </Tab.Navigator>
   );
 }
