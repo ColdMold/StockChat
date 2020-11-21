@@ -2,7 +2,7 @@ import {firebase} from '@react-native-firebase/auth';
 import React, {useState, useEffect, useCallback} from 'react';
 import {Bubble, GiftedChat} from 'react-native-gifted-chat';
 import database from '@react-native-firebase/database';
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 
 export default function ChatRoom(props) {
   const [messages, setMessages] = useState([]);
