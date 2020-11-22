@@ -3,6 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../Components/HomeScreen';
 import StockPage from '../Components/StockPage'
 import ChatRoom from '../Components/Chat/ChatRoom';
+import ProfileTab from '../Components/AppTabNavigator/ProfileTab';
+import ResetPasswordScreen from '../Components/ResetPasswordScreen';
 
 const Stack = createStackNavigator();
 
@@ -14,6 +16,8 @@ export default function AppStack() {
       <Stack.Screen name='ChatRoom' component={ChatRoom} options={({ route }) => ({
         title: `${route.params.companySymbol} Chat Room`
       })}/>
+      <Stack.Screen name ='Reset Password' component={ResetPasswordScreen}/>
+      <Stack.Screen name ='Profile' component={ProfileTab}/>
     </Stack.Navigator>
   );
 }
