@@ -12,41 +12,32 @@ export const AuthProvider = ({ children }) => {
           user,
           setUser,
           login: async (email, password) => {
-            try {
-              await auth().signInWithEmailAndPassword(email, password);
-            } catch (e) {
-              console.log(e);
-            }
+            await auth().signInWithEmailAndPassword(email, password).catch(error => {
+              alert(error);
+            });
           },
           register: async (username, email, password) => {
-            try {
-              await auth().createUserWithEmailAndPassword(email, password).then((userCredentials) => {
-                if(userCredentials.user) {
-                  userCredentials.user.updateProfile({
-                    displayName: username
-                  });
-                }
+            await auth().createUserWithEmailAndPassword(email, password).then((userCredentials) => {
+              if(userCredentials.user) {
+                userCredentials.user.updateProfile({
+                  displayName: username
+                });
+              }
+            }).catch(error => {
+                alert(error);
               });
-            } catch (e) {
-              console.log(e);
-            }
           },
           logout: async () => {
-            try {
-              await auth().signOut();
-            } catch (e) {
-              console.error(e);
-            }
+            await auth().signOut().catch(error => {
+              alert(error);
+            });
           },
           forgotPass: async (email) => {
-            try {
-              await auth().sendPasswordResetEmail(email);
+              await auth().sendPasswordResetEmail(email).catch(error => {
+                alert(error);
+              });
               console.log("email sent");
-            } catch (e) {
-              console.error(e);
-              //can we use react components here to display error?
-              //or do we need to pass errors as part of the state to get access to them in the different screens?
-            }
+            
           }
         }}
       >
