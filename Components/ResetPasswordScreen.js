@@ -52,7 +52,7 @@ export default function ResetPasswordScreen({ navigation }) {
                   navigation.navigate('Profile')
                 } catch(error) {
                   alert(error);
-a                }
+a               }
             }}
           />
           <IconButton
