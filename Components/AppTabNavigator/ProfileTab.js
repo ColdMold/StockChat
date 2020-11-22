@@ -5,7 +5,6 @@ import FormButton from '../FormButton';
 import FormInput from '../FormInput';
 import { AuthContext } from '../../Navigation/AuthProvider';
 import auth, { firebase } from '@react-native-firebase/auth';
-import Toast from 'react-native-simple-toast';
 
 export default function ProfileTab({ navigation }) {
     const { logout, user, setUser } = useContext(AuthContext);
@@ -32,12 +31,10 @@ export default function ProfileTab({ navigation }) {
         let user = firebase.auth().currentUser;
         user.updatePassword(newPassword).then(() => {
         }).catch((error) => {
-          console.log(error);
-          //Toast.showWithGravity(error, Toast.TOP);
+          alert(error);
         });
       }).catch((error) => {
-        console.log(error);
-        //Toast.showWithGravity(error, Toast.TOP);
+        alert(error);
       })
     }
 
