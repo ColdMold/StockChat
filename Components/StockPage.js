@@ -1,11 +1,24 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {StyleSheet, View, Text} from 'react-native';
 import {Container, Content} from 'native-base';
-import {DataTable, Title} from 'react-native-paper';
+import {
+  DataTable,
+  Title,
+  Button,
+  Banner,
+  Card,
+  Paragraph,
+  List,
+} from 'react-native-paper';
 
 export default function StockPage(props) {
   const [companySymbol, setCompanySymbol] = useState('');
   const [companyName, setCompanyName] = useState('');
+  const [favorited, setFavorited] = useState(false);
+  const [chatJoined, setChatJoined] = useState(false);
+  const [forumJoined, setForumJoined] = useState(false);
+  const [fullTextShown, setFullTextShown] = useState(false);
+  const [showMoreShown, setShowMoreShown] = useState(false);
 
   useEffect(() => {
     const {companySymbol, companyName} = props.route.params;
@@ -13,8 +26,31 @@ export default function StockPage(props) {
     setCompanyName(companyName);
   }, []);
 
+  // TODO: Use these functions to implement behavior when clicking chat/favorites/forums buttons
+  // We will have to load in favorites state in useEffect from database
+  // and whether or not a user is a part of a forum
+  // DECIDE: Do we want to have separations between the stocks a user can
+  // favorite and join chat / join forums?
+  const favoritePressed = () => {
+    setFavorited(!favorited);
+    const action = favorited ? 'removed from' : 'added to';
+    console.log(`${companySymbol} ${action} Favorites!`);
+  };
+
+  const joinChatPressed = () => {
+    setChatJoined(!chatJoined);
+    const action = chatJoined ? 'left' : 'joined';
+    console.log(`You ${action} ${companySymbol} chat!`);
+  };
+
+  const joinForumPressed = () => {
+    setForumJoined(!forumJoined);
+    const action = forumJoined ? 'left' : 'joined';
+    console.log(`You ${action} ${companySymbol} forum!`);
+  };
+
   // mock response from https://iexcloud.io/docs/api/#advanced-stats
-  const mockJsonResponse = {
+  const advStatsResponse = {
     companyName: 'Apple Inc.',
     marketcap: 760334287200,
     week52high: 156.65,
@@ -47,6 +83,65 @@ export default function StockPage(props) {
     day5ChangePercent: -0.005762605699968781,
   };
 
+  const companyInfoResponse = {
+    symbol: 'AAPL',
+    companyName: 'Apple Inc.',
+    exchange: 'NASDAQ',
+    industry: 'Telecommunications Equipment',
+    website: 'http://www.apple.com',
+    description:
+      'Apple, Inc. engages in the design, manufacture, and marketing of mobile communication, media devices, personal computers, and portable digital music players. It operates through the following geographical segments: Americas, Europe, Greater China, Japan, and Rest of Asia Pacific. The Americas segment includes North and South America. The Europe segment consists of European countries, as well as India, the Middle East, and Africa. The Greater China segment comprises of China, Hong Kong, and Taiwan. The Rest of Asia Pacific segment includes Australia and Asian countries. The company was founded by Steven Paul Jobs, Ronald Gerald Wayne, and Stephen G. Wozniak on April 1, 1976 and is headquartered in Cupertino, CA.',
+    CEO: 'Timothy Donald Cook',
+    securityName: 'Apple Inc.',
+    issueType: 'cs',
+    sector: 'Electronic Technology',
+    primarySicCode: 3663,
+    employees: 132000,
+    tags: ['Electronic Technology', 'Telecommunications Equipment'],
+    address: 'One Apple Park Way',
+    address2: null,
+    state: 'CA',
+    city: 'Cupertino',
+    zip: '95014-2083',
+    country: 'US',
+    phone: '1.408.974.3123',
+  };
+
+  const bannerDisplay = () => {
+    // Main Rendering Return for the Functional Component
+    const getActionLabel = (action) => {
+      switch (action) {
+        case 'favorite':
+          return favorited ? 'Remove from Favorites' : 'Add to Favorites';
+        case 'chat':
+          return chatJoined ? 'Leave Chat' : 'Join Chat';
+        case 'forum':
+          return forumJoined ? 'Leave Forum' : 'Join Forum';
+      }
+    };
+
+    return (
+      <Banner
+        visible={true}
+        actions={[
+          {
+            label: getActionLabel('favorite'),
+            onPress: () => favoritePressed(),
+            mode: 'contained',
+            color: 'green',
+          },
+          {
+            label: getActionLabel('forum'),
+            onPress: () => joinForumPressed(),
+            mode: 'contained',
+            color: 'green',
+          },
+        ]}>
+        <Title style={styles.title}>{companyName}</Title>
+      </Banner>
+    );
+  };
+
   // TODO IDEAS HERE:
   // 1. Add a function to FORMAT the response returns in the table
   //    Will need to format numbers like avg30volume / 30 to 4 digits
@@ -69,58 +164,87 @@ export default function StockPage(props) {
         <DataTable.Row>
           <DataTable.Cell>
             <DataTable.Cell>Mkt Cap: </DataTable.Cell>
-            <DataTable.Cell>{mockJsonResponse.marketcap}</DataTable.Cell>
+            <DataTable.Cell>{advStatsResponse.marketcap}</DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
             <DataTable.Cell>Avg Vol: </DataTable.Cell>
-            <DataTable.Cell>{mockJsonResponse.avg30Volume / 30}</DataTable.Cell>
+            <DataTable.Cell>{advStatsResponse.avg30Volume / 30}</DataTable.Cell>
           </DataTable.Cell>
         </DataTable.Row>
 
         <DataTable.Row>
           <DataTable.Cell>
             <DataTable.Cell>52 Wk Low: </DataTable.Cell>
-            <DataTable.Cell>{mockJsonResponse.week52low}</DataTable.Cell>
+            <DataTable.Cell>{advStatsResponse.week52low}</DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
             <DataTable.Cell>52 Wk High: </DataTable.Cell>
-            <DataTable.Cell>{mockJsonResponse.week52high}</DataTable.Cell>
+            <DataTable.Cell>{advStatsResponse.week52high}</DataTable.Cell>
           </DataTable.Cell>
         </DataTable.Row>
 
         <DataTable.Row>
           <DataTable.Cell>
             <DataTable.Cell>Div/Yield: </DataTable.Cell>
-            <DataTable.Cell>{mockJsonResponse.dividendYield}</DataTable.Cell>
+            <DataTable.Cell>{advStatsResponse.dividendYield}</DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
             <DataTable.Cell>Nxt Div: </DataTable.Cell>
-            <DataTable.Cell>{mockJsonResponse.nextDividendDate}</DataTable.Cell>
+            <DataTable.Cell>{advStatsResponse.nextDividendDate}</DataTable.Cell>
           </DataTable.Cell>
         </DataTable.Row>
 
         <DataTable.Row>
           <DataTable.Cell>
             <DataTable.Cell>P/E Ratio: </DataTable.Cell>
-            <DataTable.Cell>{mockJsonResponse.peRatio}</DataTable.Cell>
+            <DataTable.Cell>{advStatsResponse.peRatio}</DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
             <DataTable.Cell>EPS (TTM): </DataTable.Cell>
-            <DataTable.Cell>{mockJsonResponse.ttmEPS}</DataTable.Cell>
+            <DataTable.Cell>{advStatsResponse.ttmEPS}</DataTable.Cell>
           </DataTable.Cell>
         </DataTable.Row>
       </DataTable>
     );
   };
 
-  // Main Rendering Return for the Functional Component
+  const onTextLayout = useCallback((e) => {
+    setShowMoreShown(e.nativeEvent.lines.length >= 4);
+  }, []);
+
+  const toggleShowMore = () => {
+    setFullTextShown(!fullTextShown);
+  };
+
+  const descriptionTextDisplay = () => {
+    return (
+      <Card>
+        <Card.Title title="About" />
+        <Card.Content>
+          <Text
+            onTextLayout={onTextLayout}
+            numberOfLines={fullTextShown ? undefined : 4}
+            style={styles.aboutText}>
+            {companyInfoResponse.description}
+          </Text>
+          {showMoreShown ? (
+            <Text onPress={toggleShowMore} style={styles.showMoreText}>
+              {fullTextShown ? 'Show less...' : 'Show more...'}
+            </Text>
+          ) : null}
+        </Card.Content>
+      </Card>
+    );
+  };
+
+  // We don't have a join chat because adding a stock to favorites
+  // joins their chat
   return (
     <Container style={styles.container}>
       <Content>
-        <Title style={styles.title}>
-          {companySymbol} : {companyName}
-        </Title>
+        {bannerDisplay()}
         {dataTableDisplay()}
+        {descriptionTextDisplay()}
       </Content>
     </Container>
   );
@@ -133,6 +257,21 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
+  },
+  button: {
+    marginLeft: '5%',
+    marginRight: '5%',
+  },
+  card: {
     borderColor: 'black',
+  },
+  aboutText: {
+    lineHeight: 21,
+  },
+  showMoreText: {
+    lineHeight: 21,
+    marginTop: 10,
+    color: 'green',
+    fontWeight: 'bold',
   },
 });

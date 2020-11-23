@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import {Card} from 'react-native-paper';
+import {Appbar, Card} from 'react-native-paper';
 
 import {View, StyleSheet} from 'react-native';
 
 import {Container, Content, Icon} from 'native-base';
-import {HARDCODED_COMPANY_SYMBOLS_ARRAY} from '../Utils/Constants';
+import {HARDCODED_COMPANY_SYMBOLS_ARRAY, TAB_NAMES} from '../Utils/Constants';
 
 class StocksTab extends Component {
   static navigationOptions = {

@@ -37,7 +37,13 @@ export default function AppStack() {
           headerTitle: getHeaderTitle(route),
         })}
       />
-      <Stack.Screen name="StockPage" component={StockPage} />
+      <Stack.Screen
+        name="StockPage"
+        component={StockPage}
+        options={({route}) => ({
+          headerTitle: `${route.params.companySymbol}`,
+        })}
+      />
       <Stack.Screen
         name="ChatRoom"
         component={ChatRoom}
