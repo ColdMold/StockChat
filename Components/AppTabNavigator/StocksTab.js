@@ -45,7 +45,7 @@ class StocksTab extends Component {
     const apiFetchURL = `https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbols}&token=${api_key}`;
 
     try {
-      let response = await fetch(`https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbols}&token=${api_key}`);
+      let response = await fetch(apiFetchURL);
       let responseJson = await response.json();
 
       // List of "Quotes" -- to see what this is go to this sample API response:

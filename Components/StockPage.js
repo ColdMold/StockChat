@@ -90,7 +90,7 @@ export default function StockPage(props) {
     const getActionLabel = (action) => {
       switch (action) {
         case 'favorite':
-          return favorited ? 'Remove from Favorites' : 'Add to Favorites';
+          return favorited ? 'Remove Favorite' : 'Favorite';
         case 'chat':
           return chatJoined ? 'Leave Chat' : 'Join Chat';
         case 'forum':
@@ -98,19 +98,30 @@ export default function StockPage(props) {
       }
     };
 
+    const navigateToChat = () => {
+      props.navigation.navigate('ChatRoom', {
+        companySymbol: companySymbol,
+      });
+    };
+
     return (
       <Banner
         visible={true}
         actions={[
           {
-            label: getActionLabel('favorite'),
-            onPress: () => favoritePressed(),
+            label: 'Chat',
+            onPress: () => navigateToChat(),
             mode: 'contained',
-            color: 'green',
           },
           {
             label: getActionLabel('forum'),
             onPress: () => joinForumPressed(),
+            mode: 'contained',
+            color: 'green',
+          },
+          {
+            label: getActionLabel('favorite'),
+            onPress: () => favoritePressed(),
             mode: 'contained',
             color: 'green',
           },

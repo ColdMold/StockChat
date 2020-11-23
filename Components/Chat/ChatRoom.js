@@ -144,6 +144,7 @@ export default function ChatRoom(props) {
       onSend={(message) => onSend(message)}
       user={{
         _id: userId,
+        name: 'testUsername',
       }}
     />
   );
