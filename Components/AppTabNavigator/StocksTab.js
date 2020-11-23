@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import {Appbar, Card} from 'react-native-paper';
+import {Card} from 'react-native-paper';
 
 import {View, StyleSheet} from 'react-native';
 
 import {Container, Content, Icon} from 'native-base';
-import {HARDCODED_COMPANY_SYMBOLS_ARRAY, TAB_NAMES} from '../Utils/Constants';
+import {HARDCODED_COMPANY_SYMBOLS_ARRAY} from '../Utils/Constants';
 
 class StocksTab extends Component {
   static navigationOptions = {
@@ -34,7 +34,7 @@ class StocksTab extends Component {
   }
 
   async getStockCardData() {
-    // Hard coded api_key. Not sure if we will need to change this.
+    // Hard coded api_key. Will need to change this
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
 
     // Array of company symbols. Ideally we will get this information from the user's liked / purchased stocks.
@@ -45,7 +45,7 @@ class StocksTab extends Component {
     const apiFetchURL = `https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbols}&token=${api_key}`;
 
     try {
-      let response = await fetch(apiFetchURL);
+      let response = await fetch(`https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbols}&token=${api_key}`);
       let responseJson = await response.json();
 
       // List of "Quotes" -- to see what this is go to this sample API response:

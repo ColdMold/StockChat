@@ -10,6 +10,7 @@ import {
   Paragraph,
   List,
 } from 'react-native-paper';
+import compactFormat from 'cldr-compact-number';
 
 export default function StockPage(props) {
   const [companySymbol, setCompanySymbol] = useState('');
@@ -19,11 +20,46 @@ export default function StockPage(props) {
   const [forumJoined, setForumJoined] = useState(false);
   const [fullTextShown, setFullTextShown] = useState(false);
   const [showMoreShown, setShowMoreShown] = useState(false);
+  const [advStatsResponse, setAdvStatsResponse] = useState([]);
+  const [companyInfoResponse, setCompanyInfoResponse] = useState([]);
 
-  useEffect(() => {
+  const loadCompanyResponses = async (api_key) => {
     const {companySymbol, companyName} = props.route.params;
     setCompanySymbol(companySymbol);
     setCompanyName(companyName);
+
+    const advStatsFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/advanced-stats?token=${api_key}`;
+    console.log(advStatsFetchURL);
+    try {
+      await fetch(advStatsFetchURL)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          console.log(responseJson);
+          setAdvStatsResponse(responseJson);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+
+    const companyInfoFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/company?token=${api_key}`;
+    console.log(companyInfoFetchURL);
+    try {
+      await fetch(companyInfoFetchURL)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          setCompanyInfoResponse(responseJson);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // No dependency array, so this hook will act like ComponentDidMount()
+  // We want to have a live update eventually on the graph (when graph is implemented)
+  useEffect(() => {
+    // Hard coded api_key. Will need to change this
+    let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
+    loadCompanyResponses(api_key);
   }, []);
 
   // TODO: Use these functions to implement behavior when clicking chat/favorites/forums buttons
@@ -47,64 +83,6 @@ export default function StockPage(props) {
     setForumJoined(!forumJoined);
     const action = forumJoined ? 'left' : 'joined';
     console.log(`You ${action} ${companySymbol} forum!`);
-  };
-
-  // mock response from https://iexcloud.io/docs/api/#advanced-stats
-  const advStatsResponse = {
-    companyName: 'Apple Inc.',
-    marketcap: 760334287200,
-    week52high: 156.65,
-    week52low: 93.63,
-    week52change: 58.801903,
-    sharesOutstanding: 5213840000,
-    float: 5203997571,
-    avg10Volume: 2774000,
-    avg30Volume: 12774000,
-    day200MovingAvg: 140.60541,
-    day50MovingAvg: 156.49678,
-    employees: 120000,
-    ttmEPS: 16.5,
-    ttmDividendRate: 2.25,
-    dividendYield: 0.021,
-    nextDividendDate: '2019-03-01',
-    exDividendDate: '2019-02-08',
-    nextEarningsDate: '2019-01-01',
-    peRatio: 14,
-    beta: 1.25,
-    maxChangePercent: 153.021,
-    year5ChangePercent: 0.5902546932200027,
-    year2ChangePercent: 0.3777449874142869,
-    year1ChangePercent: 0.39751716851558366,
-    ytdChangePercent: 0.36659492036160124,
-    month6ChangePercent: 0.12208398133748043,
-    month3ChangePercent: 0.08466584665846649,
-    month1ChangePercent: 0.009668596145283263,
-    day30ChangePercent: -0.002762605699968781,
-    day5ChangePercent: -0.005762605699968781,
-  };
-
-  const companyInfoResponse = {
-    symbol: 'AAPL',
-    companyName: 'Apple Inc.',
-    exchange: 'NASDAQ',
-    industry: 'Telecommunications Equipment',
-    website: 'http://www.apple.com',
-    description:
-      'Apple, Inc. engages in the design, manufacture, and marketing of mobile communication, media devices, personal computers, and portable digital music players. It operates through the following geographical segments: Americas, Europe, Greater China, Japan, and Rest of Asia Pacific. The Americas segment includes North and South America. The Europe segment consists of European countries, as well as India, the Middle East, and Africa. The Greater China segment comprises of China, Hong Kong, and Taiwan. The Rest of Asia Pacific segment includes Australia and Asian countries. The company was founded by Steven Paul Jobs, Ronald Gerald Wayne, and Stephen G. Wozniak on April 1, 1976 and is headquartered in Cupertino, CA.',
-    CEO: 'Timothy Donald Cook',
-    securityName: 'Apple Inc.',
-    issueType: 'cs',
-    sector: 'Electronic Technology',
-    primarySicCode: 3663,
-    employees: 132000,
-    tags: ['Electronic Technology', 'Telecommunications Equipment'],
-    address: 'One Apple Park Way',
-    address2: null,
-    state: 'CA',
-    city: 'Cupertino',
-    zip: '95014-2083',
-    country: 'US',
-    phone: '1.408.974.3123',
   };
 
   const bannerDisplay = () => {
@@ -164,44 +142,70 @@ export default function StockPage(props) {
         <DataTable.Row>
           <DataTable.Cell>
             <DataTable.Cell>Mkt Cap: </DataTable.Cell>
-            <DataTable.Cell>{advStatsResponse.marketcap}</DataTable.Cell>
+            <DataTable.Cell>
+              {compactFormat(advStatsResponse.marketcap, 'en', null, {
+                significantDigits: 3,
+                maximumFractionDigits: 4,
+              })}
+            </DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
             <DataTable.Cell>Avg Vol: </DataTable.Cell>
-            <DataTable.Cell>{advStatsResponse.avg30Volume / 30}</DataTable.Cell>
+            <DataTable.Cell>
+              {compactFormat(advStatsResponse.avg30Volume / 30, 'en', null, {
+                significantDigits: 3,
+                maximumFractionDigits: 4,
+              })}
+            </DataTable.Cell>
           </DataTable.Cell>
         </DataTable.Row>
 
         <DataTable.Row>
           <DataTable.Cell>
             <DataTable.Cell>52 Wk Low: </DataTable.Cell>
-            <DataTable.Cell>{advStatsResponse.week52low}</DataTable.Cell>
+            <DataTable.Cell>
+              {parseFloat(advStatsResponse.week52low).toFixed(2)}
+            </DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
             <DataTable.Cell>52 Wk High: </DataTable.Cell>
-            <DataTable.Cell>{advStatsResponse.week52high}</DataTable.Cell>
+            <DataTable.Cell>
+              {parseFloat(advStatsResponse.week52high).toFixed(2)}
+            </DataTable.Cell>
           </DataTable.Cell>
         </DataTable.Row>
 
         <DataTable.Row>
           <DataTable.Cell>
             <DataTable.Cell>Div/Yield: </DataTable.Cell>
-            <DataTable.Cell>{advStatsResponse.dividendYield}</DataTable.Cell>
+            <DataTable.Cell>
+              {advStatsResponse.dividendYield == null
+                ? 'N/A'
+                : parseFloat(advStatsResponse.dividendYield).toFixed(3)}
+            </DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
             <DataTable.Cell>Nxt Div: </DataTable.Cell>
-            <DataTable.Cell>{advStatsResponse.nextDividendDate}</DataTable.Cell>
+            <DataTable.Cell>
+              {advStatsResponse.nextDividendDate == null
+                ? 'N/A'
+                : advStatsResponse.nextDividendDate}
+            </DataTable.Cell>
           </DataTable.Cell>
         </DataTable.Row>
 
         <DataTable.Row>
           <DataTable.Cell>
             <DataTable.Cell>P/E Ratio: </DataTable.Cell>
-            <DataTable.Cell>{advStatsResponse.peRatio}</DataTable.Cell>
+            <DataTable.Cell>
+              {parseFloat(advStatsResponse.peRatio).toFixed(2)}
+            </DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
             <DataTable.Cell>EPS (TTM): </DataTable.Cell>
-            <DataTable.Cell>{advStatsResponse.ttmEPS}</DataTable.Cell>
+            <DataTable.Cell>
+              {parseFloat(advStatsResponse.ttmEPS).toFixed(3)}
+            </DataTable.Cell>
           </DataTable.Cell>
         </DataTable.Row>
       </DataTable>
