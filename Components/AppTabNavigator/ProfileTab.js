@@ -1,9 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Title } from 'react-native-paper';
+//import { Title } from 'react-native-paper';
 import FormButton from '../FormButton';
 import { AuthContext } from '../../Navigation/AuthProvider';
 import auth from '@react-native-firebase/auth';
+import {
+  DataTable,
+  Title,
+  Button,
+  Banner,
+  Card,
+  Paragraph,
+  List,
+} from 'react-native-paper';
 
 export default function ProfileTab({ navigation }) {
     const { logout, user, setUser } = useContext(AuthContext);
