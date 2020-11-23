@@ -27,7 +27,6 @@ class StocksTab extends Component {
 
   componentDidMount() {
     //NetInfo.isConnected.fetch().then(isConnected => {
-      console.log(process.env.REACT_APP_IEX_API_KEY);
     if (true) {
       this.getStockCardData();
     }
@@ -37,6 +36,7 @@ class StocksTab extends Component {
     // Hard coded api_key. Not sure if we will need to change this.
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
     //let api_key = process.env.REACT_APP_IEX_API_KEY;
+    //deleted .env for now as it was not even working, and technically is still not even secure
 
     // Array of company symbols. Ideally we will get this information from the user's liked / purchased stocks.
     let companySymbolsArray = ['AAPL', 'TSLA', 'IBM', 'MSFT', 'NET'];
