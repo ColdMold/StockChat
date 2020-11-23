@@ -57,9 +57,17 @@ export default function StockPage(props) {
   // No dependency array, so this hook will act like ComponentDidMount()
   // We want to have a live update eventually on the graph (when graph is implemented)
   useEffect(() => {
+    let isMounted = true;
     // Hard coded api_key. Will need to change this
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
-    loadCompanyResponses(api_key);
+    if (isMounted) {
+      loadCompanyResponses(api_key);
+    }
+
+    return () => {
+      console.log('StockPage useEffect Return:');
+      isMounted = false;
+    };
   }, []);
 
   // TODO: Use these functions to implement behavior when clicking chat/favorites/forums buttons

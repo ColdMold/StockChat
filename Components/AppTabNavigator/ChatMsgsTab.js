@@ -52,14 +52,6 @@ class ChatMsgsTab extends Component {
     navigation.navigate('ChatRoom', {
       companySymbol: symbol,
     });
-
-    /*
-            return(
-                <div>
-                    <ChatRoomComponent message={symbol}/>
-                </div>
-            );
-      */
   }
 }
 export default ChatMsgsTab;
