@@ -57,6 +57,15 @@ export default function StockPage(props) {
     }
   };
 
+
+  // No dependency array, so this hook will act like ComponentDidMount()
+  // We want to have a live update eventually on the graph (when graph is implemented)
+  useEffect(() => {
+    // Hard coded api_key. Will need to change this
+    let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
+    loadCompanyResponses(api_key);
+  }, [favorited]);
+
   const pushFavoriteDB = () => {
     let uid = firebase.auth().currentUser.uid;
     const newFavorite = database()
@@ -66,13 +75,14 @@ export default function StockPage(props) {
         });
   }
 
-  // No dependency array, so this hook will act like ComponentDidMount()
-  // We want to have a live update eventually on the graph (when graph is implemented)
-  useEffect(() => {
-    // Hard coded api_key. Will need to change this
-    let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
-    loadCompanyResponses(api_key);
-  }, []);
+  const removeFavoriteDB = () => {
+    let uid = firebase.auth().currentUser.uid;
+    const deleteFavorite = database()
+        .ref(`/${uid}/favorites`)
+        .update({
+          [companySymbol]: false,
+        });
+  }
 
   // TODO: Use these functions to implement behavior when clicking chat/favorites/forums buttons
   // We will have to load in favorites state in useEffect from database
@@ -83,7 +93,11 @@ export default function StockPage(props) {
     setFavorited(!favorited);
     const action = favorited ? 'removed from' : 'added to';
     console.log(`${companySymbol} ${action} Favorites!`);
-    pushFavoriteDB();
+    if(favorited) {
+      pushFavoriteDB();
+    } else {
+      removeFavoriteDB();
+    }
   };
 
   const joinChatPressed = () => {
