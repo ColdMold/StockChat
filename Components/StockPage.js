@@ -64,6 +64,14 @@ export default function StockPage(props) {
     // Hard coded api_key. Will need to change this
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
     loadCompanyResponses(api_key);
+  }, []);
+
+  useEffect(() => {
+    if(favorited) {
+      pushFavoriteDB();
+    } else {
+      removeFavoriteDB();
+    }
   }, [favorited]);
 
   const pushFavoriteDB = () => {
@@ -90,14 +98,11 @@ export default function StockPage(props) {
   // DECIDE: Do we want to have separations between the stocks a user can
   // favorite and join chat / join forums?
   const favoritePressed = () => {
+    console.log(favorited);
     setFavorited(!favorited);
+    console.log(favorited);
     const action = favorited ? 'removed from' : 'added to';
     console.log(`${companySymbol} ${action} Favorites!`);
-    if(favorited) {
-      pushFavoriteDB();
-    } else {
-      removeFavoriteDB();
-    }
   };
 
   const joinChatPressed = () => {
