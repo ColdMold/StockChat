@@ -71,31 +71,6 @@ export default function ProfileTab({ navigation }) {
         </Content>
       </Container>
     );
-
-  /*
-    return (
-        <View style={styles.container}>
-          <Title>Welcome {user.displayName}</Title>
-          <FormButton
-          title='Change password?'
-          modeValue='text'
-          uppercase={false}
-          labelStyle={styles.navButtonText}
-          onPress={() => navigation.navigate('Reset Password')}
-        />
-          <FormButton
-            title='Logout'
-            modeValue='contained'
-            labelStyle={styles.loginButtonLabel}
-            onPress={() => {
-                logout();
-                //navigation.navigate('Login');
-                //might not need navigation, logout should auto go back to login screen
-            }}
-          />
-        </View>
-      );
-      */
 }
 
 const styles = StyleSheet.create({

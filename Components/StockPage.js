@@ -11,11 +11,14 @@ import {
   List,
 } from 'react-native-paper';
 import compactFormat from 'cldr-compact-number';
+import {firebase} from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 
 export default function StockPage(props) {
   const [companySymbol, setCompanySymbol] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [favorited, setFavorited] = useState(false);
+  const [userUID, setUserUID] = useState('');
   const [chatJoined, setChatJoined] = useState(false);
   const [forumJoined, setForumJoined] = useState(false);
   const [fullTextShown, setFullTextShown] = useState(false);
@@ -54,6 +57,21 @@ export default function StockPage(props) {
     }
   };
 
+  const pushFavoriteDB = () => {
+    let uid = firebase.auth().currentUser.uid;
+    const newFavorite = database()
+        .ref(`/${uid}/`)
+        .set({
+          favorites: {
+            APPL: true 
+          },
+          user: {
+            _id: userId,
+            name: 'testUsername',
+          },
+        });
+  }
+
   // No dependency array, so this hook will act like ComponentDidMount()
   // We want to have a live update eventually on the graph (when graph is implemented)
   useEffect(() => {
@@ -71,6 +89,7 @@ export default function StockPage(props) {
     setFavorited(!favorited);
     const action = favorited ? 'removed from' : 'added to';
     console.log(`${companySymbol} ${action} Favorites!`);
+    pushFavoriteDB();
   };
 
   const joinChatPressed = () => {
