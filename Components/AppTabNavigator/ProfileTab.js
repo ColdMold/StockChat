@@ -4,6 +4,8 @@ import { View, StyleSheet } from 'react-native';
 import FormButton from '../FormButton';
 import { AuthContext } from '../../Navigation/AuthProvider';
 import auth from '@react-native-firebase/auth';
+import {Container, Content} from 'native-base';
+
 import {
   DataTable,
   Title,
@@ -16,8 +18,34 @@ import {
 
 export default function ProfileTab({ navigation }) {
     const { logout, user, setUser } = useContext(AuthContext);
-    const [userPassword, setUserPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
+
+    const bannerDisplay = () => {
+      return (
+        <Banner
+          visible={true}
+          actions={[
+            {
+              label: 'About Us',
+              onPress: () => navigation.navigate('About Us'),
+              mode: 'contained',
+            },
+            {
+              label: 'Change Password',
+              onPress: () => navigation.navigate('Reset Password'),
+              mode: 'contained',
+              color: 'green',
+            },
+            {
+              label: 'Logout',
+              onPress: () => logout(),
+              mode: 'contained',
+              color: 'purple',
+            },
+          ]}>
+          <Title style={styles.title}>Welcome {user.displayName}</Title>
+        </Banner>
+      );
+    };
 
     function onAuthStateChanged(user) {
       setUser(user);
@@ -28,7 +56,15 @@ export default function ProfileTab({ navigation }) {
       return subscriber; // unsubscribe on unmount
     }, [user]);
 
-  
+    return(
+      <Container style={styles.container}> 
+        <Content>
+          {bannerDisplay()}
+        </Content>
+      </Container>
+    );
+
+  /*
     return (
         <View style={styles.container}>
           <Title>Welcome {user.displayName}</Title>
@@ -51,6 +87,7 @@ export default function ProfileTab({ navigation }) {
           />
         </View>
       );
+      */
 }
 
 const styles = StyleSheet.create({
@@ -63,6 +100,9 @@ const styles = StyleSheet.create({
     titleText: {
       fontSize: 24,
       marginBottom: 10
+    },
+    title: {
+      textAlign: 'center',
     },
     loginButtonLabel: {
       fontSize: 22

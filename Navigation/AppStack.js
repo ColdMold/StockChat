@@ -5,6 +5,7 @@ import StockPage from '../Components/StockPage'
 import ChatRoom from '../Components/Chat/ChatRoom';
 import ProfileTab from '../Components/AppTabNavigator/ProfileTab';
 import ResetPasswordScreen from '../Components/ResetPasswordScreen';
+import AboutUsScreen from '../Components/AboutUsScreen'
 
 const Stack = createStackNavigator();
 
@@ -18,6 +19,7 @@ export default function AppStack() {
       })}/>
       <Stack.Screen name ='Reset Password' component={ResetPasswordScreen}/>
       <Stack.Screen name ='Profile' component={ProfileTab}/>
+      <Stack.Screen name = 'About Us' component={AboutUsScreen}/>
     </Stack.Navigator>
   );
 }
