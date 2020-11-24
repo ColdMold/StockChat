@@ -61,7 +61,7 @@ export default function StockPage(props) {
     let uid = firebase.auth().currentUser.uid;
     const newFavorite = database()
         .ref(`/${uid}/favorites`)
-        .set({
+        .update({
           [companySymbol]: true,
         });
   }
