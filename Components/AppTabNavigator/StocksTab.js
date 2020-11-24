@@ -4,6 +4,7 @@ import {Card} from 'react-native-paper';
 import {View, StyleSheet} from 'react-native';
 
 import {Container, Content, Icon} from 'native-base';
+import {HARDCODED_COMPANY_SYMBOLS_ARRAY} from '../Utils/Constants';
 
 class StocksTab extends Component {
   static navigationOptions = {
@@ -33,13 +34,13 @@ class StocksTab extends Component {
   }
 
   async getStockCardData() {
-    // Hard coded api_key. Not sure if we will need to change this.
+    // Hard coded api_key. Will need to change this
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
     //let api_key = process.env.REACT_APP_IEX_API_KEY;
     //deleted .env for now as it was not even working, and technically is still not even secure
 
     // Array of company symbols. Ideally we will get this information from the user's liked / purchased stocks.
-    let companySymbolsArray = ['AAPL', 'TSLA', 'IBM', 'MSFT', 'NET'];
+    let companySymbolsArray = HARDCODED_COMPANY_SYMBOLS_ARRAY;
 
     let companySymbols = companySymbolsArray.join(',').toLowerCase();
 

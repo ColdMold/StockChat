@@ -1,6 +1,8 @@
 import {firebase} from '@react-native-firebase/auth';
 import React, {useState, useEffect, useCallback} from 'react';
-import {GiftedChat} from 'react-native-gifted-chat';
+import {Bubble, GiftedChat} from 'react-native-gifted-chat';
+import database from '@react-native-firebase/database';
+import {View} from 'react-native';
 
 export default function ChatRoom(props) {
   const [messages, setMessages] = useState([]);
@@ -37,51 +39,112 @@ export default function ChatRoom(props) {
   // So we can see if we do things a redundant amount of times
   const getUserId = () => {
     console.log('getting user id in ChatRoom from: ' + 'firebase.auth()');
-    return firebase.auth().currentUser.getIdToken();
+    return firebase.auth().currentUser.uid;
   };
 
   useEffect(() => {
-    // here, we will pull previous messages using setMessages. For now,
-    // go with default implementation
-    // NOTE: This will call set messages each time we leave the screen
-    // Might be useful to store messages in global state at some point
-    if (messages.length < 1) {
-      setMessages([
-        {
-          _id: 1,
-          text: `Welcome to the ${companySymbol} Chat Room!`,
-          createdAt: new Date(),
-          user: {
-            _id: 0,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
-          },
-        },
-      ]);
-    } else {
-      // Set Messages from Firebase
-    }
-
+    // Gets User ID
     fetchUserId(getUserId());
-  }, [companySymbol]);
+
+    const messagesRef = firebase.database().ref(`${companySymbol}Messages`);
+    messagesRef.off();
+
+    let loadedMessages = [];
+
+    loadMessages(messagesRef, loadedMessages);
+
+    return () => {
+      console.log('useEffect Return:');
+      messagesRef.off();
+    };
+  }, []);
+
+  const loadMessages = async (messagesRef, loadedMessages) => {
+    messagesRef.off();
+    const onReceive = (data) => {
+      const message = data.val();
+      const iMessage = {
+        _id: message._id,
+        text: message.text,
+        createdAt: new Date(message.createdAt),
+        user: {
+          _id: message.user._id,
+          name: message.user.name,
+        },
+      };
+      loadedMessages.push(iMessage);
+      loadedMessages.sort(
+        (message1, message2) => message2.createdAt - message1.createdAt,
+      );
+      setMessages(loadedMessages);
+    };
+    messagesRef.on('child_added', onReceive);
+  };
 
   // This is what is used when send is pressed. We will have to
   // on successful send, upload the message to the database
-  const onSend = useCallback((message = []) => {
-    // it appears only one message is sent at a time, so we access using messages[0]
-    console.log(message[0].user._id);
-    console.log(message);
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, message),
+  const onSend = useCallback(
+    (message = []) => {
+      // it appears only one message is sent at a time, so we access using messages[0]
+      setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, message),
+      );
+
+      // Upon clicking send, the message is uploaded to firebase RTDB
+      // as a tree under (if AAPL is the company chat room)
+      // AAPLMessages/MessageId/...
+      console.log(`${companySymbol} Chat Room Uploading Messages`);
+      const newMessage = database()
+        .ref(`/${companySymbol}Messages/${message[0]._id}`)
+        .set({
+          _id: message[0]._id,
+          text: message[0].text,
+          createdAt: `${message[0].createdAt}`,
+          user: {
+            _id: userId,
+            name: 'testUsername',
+          },
+        })
+        // Remove logging here
+        .then(() => console.log(message));
+    },
+    [companySymbol, userId],
+  );
+
+  const renderBubble = (bubbleProps) => {
+    // let username = props.currentMessage.user.name;
+
+    return (
+      <View>
+        <Bubble
+          {...bubbleProps}
+          textStyle={{
+            left: {
+              color: 'white',
+            },
+            right: {
+              color: 'white',
+            },
+          }}
+          wrapperStyle={{
+            left: {
+              backgroundColor: '#535150',
+            },
+          }}
+        />
+      </View>
     );
-  }, []);
+  };
 
   return (
     <GiftedChat
+      renderUsernameOnMessage={true}
+      renderBubble={(bubbleSettings) => renderBubble(bubbleSettings)}
       messages={messages}
       onSend={(message) => onSend(message)}
       user={{
         _id: userId,
+        name: 'testUsername',
       }}
     />
   );
