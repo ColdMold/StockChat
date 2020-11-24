@@ -1,20 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-//import { Title } from 'react-native-paper';
-import FormButton from '../FormButton';
+import { View, StyleSheet, Text } from 'react-native';
+import { Title, List, Banner, Paragraph, Card } from 'react-native-paper';
 import { AuthContext } from '../../Navigation/AuthProvider';
 import auth from '@react-native-firebase/auth';
 import {Container, Content} from 'native-base';
-
-import {
-  DataTable,
-  Title,
-  Button,
-  Banner,
-  Card,
-  Paragraph,
-  List,
-} from 'react-native-paper';
 
 export default function ProfileTab({ navigation }) {
     const { logout, user, setUser } = useContext(AuthContext);
@@ -47,6 +36,24 @@ export default function ProfileTab({ navigation }) {
       );
     };
 
+   const faqDisplay = () => {
+      return(
+        /*
+        <View>
+          <Title>FAQ</Title>
+          <List>
+
+          </List>
+        </View>*/
+        <Card>
+          <Card.Title title='Question 1'/>
+          <Card.Content>
+            <Text>Answer to question 1</Text>
+          </Card.Content>
+        </Card>
+      );
+    }
+
     function onAuthStateChanged(user) {
       setUser(user);
     }
@@ -60,6 +67,7 @@ export default function ProfileTab({ navigation }) {
       <Container style={styles.container}> 
         <Content>
           {bannerDisplay()}
+          {faqDisplay()}
         </Content>
       </Container>
     );
@@ -95,7 +103,6 @@ const styles = StyleSheet.create({
       backgroundColor: '#f5f5f5',
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center'
     },
     titleText: {
       fontSize: 24,
