@@ -4,43 +4,40 @@ import auth from '@react-native-firebase/auth';
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-  
+    const [user, setUser] = useState(null);  
+
     return (
       <AuthContext.Provider
         value={{
           user,
           setUser,
           login: async (email, password) => {
-            try {
-              await auth().signInWithEmailAndPassword(email, password);
-            } catch (e) {
-              console.log(e);
-            }
+            await auth().signInWithEmailAndPassword(email, password).catch(error => {
+              alert(error);
+            });
           },
-          register: async (email, password) => {
-            try {
-              await auth().createUserWithEmailAndPassword(email, password);
-            } catch (e) {
-              console.log(e);
-            }
+          register: async (username, email, password) => {
+            await auth().createUserWithEmailAndPassword(email, password).then((userCredentials) => {
+              if(userCredentials.user) {
+                userCredentials.user.updateProfile({
+                  displayName: username
+                });
+              }
+            }).catch(error => {
+                alert(error);
+              });
           },
           logout: async () => {
-            try {
-              await auth().signOut();
-            } catch (e) {
-              console.error(e);
-            }
+            await auth().signOut().catch(error => {
+              alert(error);
+            });
           },
           forgotPass: async (email) => {
-            try {
-              await auth().sendPasswordResetEmail(email);
+              await auth().sendPasswordResetEmail(email).catch(error => {
+                alert(error);
+              });
               console.log("email sent");
-            } catch (e) {
-              console.error(e);
-              //can we use react components here to display error?
-              //or do we need to pass errors as part of the state to get access to them in the different screens?
-            }
+            
           }
         }}
       >
