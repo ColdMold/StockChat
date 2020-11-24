@@ -7,12 +7,19 @@ import { AuthContext } from '../Navigation/AuthProvider';
 
 export default function SignupScreen({ navigation }) {
   const { register } = useContext(AuthContext);
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   return (
     <View style={styles.container}>
       <Title style={styles.titleText}>Register to chat</Title>
+      <FormInput
+          labelName='Username'
+          value={username}
+          autoCapitalize='none'
+          onChangeText={username => setUsername(username)}
+        />
       <FormInput
         labelName='Email'
         value={email}
@@ -29,7 +36,7 @@ export default function SignupScreen({ navigation }) {
         title='Signup'
         modeValue='contained'
         labelStyle={styles.loginButtonLabel}
-        onPress={() => register(email, password)}
+        onPress={() => register(username, email, password)}
       />
       <IconButton
         icon='keyboard-backspace'

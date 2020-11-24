@@ -36,6 +36,8 @@ class StocksTab extends Component {
   async getStockCardData() {
     // Hard coded api_key. Will need to change this
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
+    //let api_key = process.env.REACT_APP_IEX_API_KEY;
+    //deleted .env for now as it was not even working, and technically is still not even secure
 
     // Array of company symbols. Ideally we will get this information from the user's liked / purchased stocks.
     let companySymbolsArray = HARDCODED_COMPANY_SYMBOLS_ARRAY;
