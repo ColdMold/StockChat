@@ -18,8 +18,8 @@ export default function AppStack() {
         title: `${route.params.companySymbol} Chat Room`
       })}/>
       <Stack.Screen name ='Reset Password' component={ResetPasswordScreen}/>
-      <Stack.Screen name ='Profile' component={ProfileTab}/>
       <Stack.Screen name = 'About Us' component={AboutUsScreen}/>
+      <Stack.Screen name ='Profile' component={ProfileTab}/>
     </Stack.Navigator>
   );
 }
