@@ -60,15 +60,9 @@ export default function StockPage(props) {
   const pushFavoriteDB = () => {
     let uid = firebase.auth().currentUser.uid;
     const newFavorite = database()
-        .ref(`/${uid}/`)
+        .ref(`/${uid}/favorites`)
         .set({
-          favorites: {
-            APPL: true 
-          },
-          user: {
-            _id: userId,
-            name: 'testUsername',
-          },
+          [companySymbol]: true,
         });
   }
 
