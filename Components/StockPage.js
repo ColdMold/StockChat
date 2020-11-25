@@ -15,8 +15,12 @@ import {firebase} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 
 export default function StockPage(props) {
-  const [companySymbol, setCompanySymbol] = useState('');
-  const [companyName, setCompanyName] = useState('');
+  const [companySymbol, setCompanySymbol] = useState(
+    props.route.params.companySymbol,
+  );
+  const [companyName, setCompanyName] = useState(
+    props.route.params.companyName,
+  );
   const [favorited, setFavorited] = useState(false);
   const [chatJoined, setChatJoined] = useState(false);
   const [forumJoined, setForumJoined] = useState(false);
@@ -26,10 +30,6 @@ export default function StockPage(props) {
   const [companyInfoResponse, setCompanyInfoResponse] = useState([]);
 
   const loadCompanyResponses = async (api_key) => {
-    const {companySymbol, companyName} = props.route.params;
-    setCompanySymbol(companySymbol);
-    setCompanyName(companyName);
-
     const advStatsFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/advanced-stats?token=${api_key}`;
     console.log(advStatsFetchURL);
     try {
@@ -56,7 +56,6 @@ export default function StockPage(props) {
     }
   };
 
-
   // No dependency array, so this hook will act like ComponentDidMount()
   // We want to have a live update eventually on the graph (when graph is implemented)
   useEffect(() => {
@@ -65,47 +64,46 @@ export default function StockPage(props) {
     loadCompanyResponses(api_key);
   }, []);
 
-
-  useEffect( () => {
+  useEffect(() => {
     console.log(favorited + 'USE EFFECT');
 
-    /*let isMounted = true;
+    let isMounted = true;
     //console.log(favorited + 'USE EFFECT');
-    if(isMounted) {
-      if(favorited) {
-        pushFavoriteDB();
-     } else {
+    if (isMounted) {
+      let uid = firebase.auth().currentUser.uid;
+      console.log('userid: ' + uid);
+      console.log('companySymbol: ' + companySymbol);
+
+      if (favorited) {
+        pushFavoriteDB(uid);
+      } else {
         removeFavoriteDB();
-     }
-    }*/
-    
-/*
+      }
+    }
+
     return () => {
       console.log(favorited + 'USE EFFECT RETURN');
       isMounted = false;
-    } */
-  
+    };
   }, [favorited]);
 
- 
-  const pushFavoriteDB = () => {
-    let uid = firebase.auth().currentUser.uid;
+  const pushFavoriteDB = (uid) => {
     const newFavorite = database()
-        .ref(`/${uid}/favorites`)
-        .set({
-          [companySymbol]: true,
-        });
-        console.log('successful push to db');
-  }
+      .ref(`${uid}/favorites`)
+      .update({
+        [companySymbol]: true,
+      });
+    console.log('successful push to db');
+  };
 
   const removeFavoriteDB = () => {
     let uid = firebase.auth().currentUser.uid;
     const deleteFavorite = database()
-        .ref(`/${uid}/favorites`)
-        .update({
-          [companySymbol]: false,
-        });
-  }
+      .ref(`${uid}/favorites`)
+      .update({
+        [companySymbol]: null,
+      });
+  };
 
   // TODO: Use these functions to implement behavior when clicking chat/favorites/forums buttons
   // We will have to load in favorites state in useEffect from database
@@ -116,7 +114,7 @@ export default function StockPage(props) {
   const favoritePressed = () => {
     console.log(favorited);
     setFavorited(!favorited);
-     
+
     console.log(favorited);
     const action = favorited ? 'removed from' : 'added to';
     console.log(`${companySymbol} ${action} Favorites!`);
