@@ -18,7 +18,6 @@ export default function StockPage(props) {
   const [companySymbol, setCompanySymbol] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [favorited, setFavorited] = useState(false);
-  const [userUID, setUserUID] = useState('');
   const [chatJoined, setChatJoined] = useState(false);
   const [forumJoined, setForumJoined] = useState(false);
   const [fullTextShown, setFullTextShown] = useState(false);
@@ -66,13 +65,19 @@ export default function StockPage(props) {
     loadCompanyResponses(api_key);
   }, []);
 
-  useEffect(() => {
-    if(favorited) {
+  let isMounted = true;
+ 
+    /*if(favorited) {
       pushFavoriteDB();
     } else {
       removeFavoriteDB();
-    }
+    }*/
+ 
+
+  useEffect(() => {
+    console.log(favorited);
   }, [favorited]);
+
 
   const pushFavoriteDB = () => {
     let uid = firebase.auth().currentUser.uid;
@@ -103,6 +108,11 @@ export default function StockPage(props) {
     console.log(favorited);
     const action = favorited ? 'removed from' : 'added to';
     console.log(`${companySymbol} ${action} Favorites!`);
+    if(favorited) {
+       pushFavoriteDB();
+    } else {
+       removeFavoriteDB();
+    }
   };
 
   const joinChatPressed = () => {
