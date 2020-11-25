@@ -65,7 +65,7 @@ export default function StockPage(props) {
     loadCompanyResponses(api_key);
   }, []);
 
-  let isMounted = true;
+  
  
     /*if(favorited) {
       pushFavoriteDB();
@@ -73,9 +73,21 @@ export default function StockPage(props) {
       removeFavoriteDB();
     }*/
  
-
+  let isMounted = true;
   useEffect(() => {
-    console.log(favorited);
+    console.log(favorited + 'USE EFFECT');
+    if(isMounted) {
+      if(favorited) {
+        pushFavoriteDB();
+     } else {
+        removeFavoriteDB();
+     }
+    }
+
+    return () => {
+      console.log(favorited + 'USE EFFECT RETURN');
+      isMounted = false;
+    }
   }, [favorited]);
 
 
@@ -83,16 +95,17 @@ export default function StockPage(props) {
     let uid = firebase.auth().currentUser.uid;
     const newFavorite = database()
         .ref(`/${uid}/favorites`)
-        .update({
+        .set({
           [companySymbol]: true,
         });
+        console.log('successful push to db');
   }
 
   const removeFavoriteDB = () => {
     let uid = firebase.auth().currentUser.uid;
     const deleteFavorite = database()
         .ref(`/${uid}/favorites`)
-        .update({
+        .set({
           [companySymbol]: false,
         });
   }
@@ -102,17 +115,14 @@ export default function StockPage(props) {
   // and whether or not a user is a part of a forum
   // DECIDE: Do we want to have separations between the stocks a user can
   // favorite and join chat / join forums?
+
   const favoritePressed = () => {
-    console.log(favorited);
+    //console.log(favorited);
     setFavorited(!favorited);
-    console.log(favorited);
+     
+    //console.log(favorited);
     const action = favorited ? 'removed from' : 'added to';
     console.log(`${companySymbol} ${action} Favorites!`);
-    if(favorited) {
-       pushFavoriteDB();
-    } else {
-       removeFavoriteDB();
-    }
   };
 
   const joinChatPressed = () => {
