@@ -73,22 +73,27 @@ export default function StockPage(props) {
       removeFavoriteDB();
     }*/
  
-  let isMounted = true;
-  useEffect(() => {
+  
+  useEffect( () => {
     console.log(favorited + 'USE EFFECT');
+    /*let isMounted = true;
+    //console.log(favorited + 'USE EFFECT');
     if(isMounted) {
       if(favorited) {
         pushFavoriteDB();
      } else {
         removeFavoriteDB();
      }
-    }
-
+    }*/
+    
+/*
     return () => {
       console.log(favorited + 'USE EFFECT RETURN');
       isMounted = false;
-    }
+    } */
   }, [favorited]);
+
+ 
 
 
   const pushFavoriteDB = () => {
@@ -105,7 +110,7 @@ export default function StockPage(props) {
     let uid = firebase.auth().currentUser.uid;
     const deleteFavorite = database()
         .ref(`/${uid}/favorites`)
-        .set({
+        .update({
           [companySymbol]: false,
         });
   }
@@ -117,12 +122,17 @@ export default function StockPage(props) {
   // favorite and join chat / join forums?
 
   const favoritePressed = () => {
-    //console.log(favorited);
+    console.log(favorited);
     setFavorited(!favorited);
      
-    //console.log(favorited);
+    console.log(favorited);
     const action = favorited ? 'removed from' : 'added to';
     console.log(`${companySymbol} ${action} Favorites!`);
+    if(favorited) {
+      pushFavoriteDB();
+   } else {
+      removeFavoriteDB();
+   }
   };
 
   const joinChatPressed = () => {
