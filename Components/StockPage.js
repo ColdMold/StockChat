@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import {Container, Content} from 'native-base';
 import {
@@ -43,46 +43,44 @@ export default function StockPage(props) {
 
   const screenWidth = Dimensions.get('window').width;
 
-  // TODO: place each of these into their own method
-  // I think it's causing the app to rerender on each load
-  const loadCompanyResponses = async (api_key) => {
-    const advStatsFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/advanced-stats?token=${api_key}`;
+  const loadCompanyResponses = async (cloud_api_key, sandbox_api_key) => {
+    const advStatsFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/advanced-stats?token=${sandbox_api_key}`;
+    const companyInfoFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/company?token=${sandbox_api_key}`;
+    const companyIntradayURL = `https://cloud.iexapis.com/stable/stock/${companySymbol}/intraday-prices?token=${cloud_api_key}&chartLast=390`;
+    console.log('intradayURL: ' + companyIntradayURL);
     console.log('advStatsURL: ' + advStatsFetchURL);
+    console.log('companyInfoURL: ' + companyInfoFetchURL);
+
+    let advStatsJson = [];
+    let companyInfoJson = [];
+    let intradayJson = [];
     try {
       await fetch(advStatsFetchURL)
         .then((response) => response.json())
         .then((responseJson) => {
-          setAdvStatsResponse(responseJson);
+          advStatsJson = responseJson;
+        })
+        .then(() => {
+          fetch(companyInfoFetchURL)
+            .then((response) => response.json())
+            .then((responseJson) => {
+              companyInfoJson = responseJson;
+            })
+            .then(() => {
+              fetch(companyIntradayURL)
+                .then((response) => response.json())
+                .then((responseJson) => {
+                  intradayJson = responseJson;
+                })
+                .then(() => {
+                  setAdvStatsResponse(advStatsJson);
+                  setCompanyInfoResponse(companyInfoJson);
+                  setCompanyIntradayData(intradayJson);
+                });
+            });
         });
     } catch (error) {
-      console.error('Load1: ' + error);
-    }
-
-    const companyInfoFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/company?token=${api_key}`;
-    console.log('companyInfoURL: ' + companyInfoFetchURL);
-    try {
-      await fetch(companyInfoFetchURL)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          setCompanyInfoResponse(responseJson);
-        });
-    } catch (error) {
-      console.error('Load2: ' + error);
-    }
-
-    // TODO: Test if we can get live updates based on the response
-    // Using ACTUAL intraday endpoint - it doesn't change until it updates
-    // accurate data ... sandbox changes every second randomizing data
-    const companyIntradayURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/intraday-prices?token=${api_key}&chartLast=390`;
-    console.log('intradayURL: ' + companyIntradayURL);
-    try {
-      await fetch(companyIntradayURL)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          setCompanyIntradayData(responseJson);
-        });
-    } catch (error) {
-      console.error('Load3: ' + error);
+      console.error('Loading Responses ' + error);
     }
   };
 
@@ -91,9 +89,10 @@ export default function StockPage(props) {
   useEffect(() => {
     let isMounted = true;
     // Hard coded api_key. Will need to change this
-    let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
+    let sandbox_api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
+    let cloud_api_key = 'pk_5f709541c67045d4baf49eb884efbdda';
     if (isMounted) {
-      loadCompanyResponses(api_key);
+      loadCompanyResponses(cloud_api_key, sandbox_api_key);
     }
 
     return () => {
@@ -173,14 +172,22 @@ export default function StockPage(props) {
         .filter((average) => average != null);
 
       return [
-        Math.min(...averagePrices) * 0.98,
-        Math.max(...averagePrices) * 1.2,
+        Math.min(...averagePrices) * 0.99,
+        Math.max(...averagePrices) * 1.1,
       ];
     };
 
     if (companyIntradayData.length > 0) {
       return (
         <View>
+          <Title style={styles.priceText}>
+            Last Price{': '}
+            {
+              companyIntradayData.map((dataPoint) => dataPoint.average)[
+                companyIntradayData.length - 1
+              ]
+            }
+          </Title>
           <VictoryChart
             minDomain={{y: getDomain()[0]}}
             domain={companyIntradayData.length > 0 ? null : {y: getDomain()}}
@@ -278,7 +285,9 @@ export default function StockPage(props) {
 
         <DataTable.Row>
           <DataTable.Cell>
-            <DataTable.Cell>Mkt Cap: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>Mkt Cap: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {compactFormat(advStatsResponse.marketcap, 'en', null, {
                 significantDigits: 3,
@@ -287,7 +296,9 @@ export default function StockPage(props) {
             </DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
-            <DataTable.Cell>Avg Vol: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>Avg Vol: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {compactFormat(advStatsResponse.avg30Volume / 30, 'en', null, {
                 significantDigits: 3,
@@ -299,13 +310,17 @@ export default function StockPage(props) {
 
         <DataTable.Row>
           <DataTable.Cell>
-            <DataTable.Cell>52 Wk Low: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>52 Wk Low: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {parseFloat(advStatsResponse.week52low).toFixed(2)}
             </DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
-            <DataTable.Cell>52 Wk High: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>52 Wk High: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {parseFloat(advStatsResponse.week52high).toFixed(2)}
             </DataTable.Cell>
@@ -314,7 +329,9 @@ export default function StockPage(props) {
 
         <DataTable.Row>
           <DataTable.Cell>
-            <DataTable.Cell>Div/Yield: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>Div/Yield: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {advStatsResponse.dividendYield == null
                 ? 'N/A'
@@ -322,7 +339,9 @@ export default function StockPage(props) {
             </DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
-            <DataTable.Cell>Nxt Div: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>Nxt Div: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {advStatsResponse.nextDividendDate == null
                 ? 'N/A'
@@ -333,13 +352,17 @@ export default function StockPage(props) {
 
         <DataTable.Row>
           <DataTable.Cell>
-            <DataTable.Cell>P/E Ratio: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>P/E Ratio: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {parseFloat(advStatsResponse.peRatio).toFixed(2)}
             </DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
-            <DataTable.Cell>EPS (TTM): </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>EPS (TTM): </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {parseFloat(advStatsResponse.ttmEPS).toFixed(3)}
             </DataTable.Cell>
@@ -380,18 +403,18 @@ export default function StockPage(props) {
     );
   };
 
-  // We don't have a join chat because adding a stock to favorites
-  // joins their chat
-  return (
-    <Container style={styles.container}>
-      <Content>
-        {bannerDisplay()}
-        {chartDisplay()}
-        {dataTableDisplay()}
-        {descriptionTextDisplay()}
-      </Content>
-    </Container>
-  );
+  return useMemo(() => {
+    return (
+      <Container style={styles.container}>
+        <Content>
+          {bannerDisplay()}
+          {chartDisplay()}
+          {dataTableDisplay()}
+          {descriptionTextDisplay()}
+        </Content>
+      </Container>
+    );
+  }, [companyIntradayData]);
 }
 
 const styles = StyleSheet.create({
@@ -422,5 +445,12 @@ const styles = StyleSheet.create({
     marginLeft: '5%',
     marginRight: '5%',
     alignItems: 'center',
+  },
+  priceText: {
+    fontWeight: 'bold',
+    marginLeft: '5%',
+  },
+  statsTitle: {
+    fontWeight: 'bold',
   },
 });
