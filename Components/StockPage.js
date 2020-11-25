@@ -37,7 +37,8 @@ export default function StockPage(props) {
 
   const screenWidth = Dimensions.get('window').width;
 
-  // place each of these into their own method
+  // TODO: place each of these into their own method
+  // I think it's causing the app to rerender on each load
   const loadCompanyResponses = async (api_key) => {
     const {companySymbol, companyName} = props.route.params;
     setCompanySymbol(companySymbol);
@@ -49,11 +50,10 @@ export default function StockPage(props) {
       await fetch(advStatsFetchURL)
         .then((response) => response.json())
         .then((responseJson) => {
-          console.log(responseJson);
           setAdvStatsResponse(responseJson);
         });
     } catch (error) {
-      console.error(error);
+      console.error('Load1: ' + error);
     }
 
     const companyInfoFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/company?token=${api_key}`;
@@ -65,7 +65,7 @@ export default function StockPage(props) {
           setCompanyInfoResponse(responseJson);
         });
     } catch (error) {
-      console.error(error);
+      console.error('Load2: ' + error);
     }
 
     const companyIntradayURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/intraday-prices?token=${api_key}&chartLast=390`;
@@ -77,7 +77,7 @@ export default function StockPage(props) {
           setCompanyIntradayData(responseJson);
         });
     } catch (error) {
-      console.error(error);
+      console.error('Load3: ' + error);
     }
   };
 
@@ -125,22 +125,23 @@ export default function StockPage(props) {
     // All 3 loadResponse calls being in the same method
     // Corresponding with 3 separate rerenders
     console.log('chartDisplay');
-    const getMinMaxOfDataPrices = () => {
-      const priceArray = companyIntradayData.map((data) => data.high);
-      return [Math.min(...priceArray) * 0.9, Math.max(...priceArray) * 1.15];
-    };
 
     return (
       <View>
-        <VictoryChart width={screenWidth} theme={VictoryTheme.material}>
-          <VictoryAxis crossAxis tickFormat={() => ''} />
-          <VictoryAxis dependentAxis domain={getMinMaxOfDataPrices()} />
+        <VictoryChart
+          width={screenWidth}
+          theme={VictoryTheme.material}
+          containerComponent={
+            <VictoryVoronoiContainer labels={({datum}) => `${datum.average}`} />
+          }>
+          <VictoryAxis fixLabelOverlap={true} />
+          <VictoryAxis dependentAxis />
           <VictoryLine
             data={companyIntradayData.filter((dataPoint) => {
               let minutes = dataPoint.minute.split(':')[1];
-              return minutes % 10 === 0;
+              return minutes % 5 === 0;
             })}
-            y={(datum) => datum.high}
+            y={(datum) => datum.average}
             x={(datum) => datum.minute}
             style={{
               data: {stroke: '#c43a31'},
@@ -154,6 +155,7 @@ export default function StockPage(props) {
   };
 
   const bannerDisplay = () => {
+    console.log('bannerDisplay()');
     // Main Rendering Return for the Functional Component
     const getActionLabel = (action) => {
       switch (action) {
@@ -208,6 +210,8 @@ export default function StockPage(props) {
   //    help user discern between categories and values.
   // 5. Add expansion if a user wants to view "more stats".
   const dataTableDisplay = () => {
+    console.log('dataTableDisplay()');
+
     return (
       <DataTable>
         <DataTable.Header>
@@ -296,6 +300,8 @@ export default function StockPage(props) {
   };
 
   const descriptionTextDisplay = () => {
+    console.log('descriptionTextDisplay()');
+
     return (
       <Card>
         <Card.Title title="About" />
