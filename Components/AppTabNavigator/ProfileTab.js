@@ -51,11 +51,6 @@ export default function ProfileTab({navigation}) {
     setUser(user);
   }
 
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
-  }, [user]);
-
   return (
     <Container style={styles.container}>
       <Content>
