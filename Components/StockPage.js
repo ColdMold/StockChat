@@ -65,17 +65,10 @@ export default function StockPage(props) {
     loadCompanyResponses(api_key);
   }, []);
 
-  
- 
-    /*if(favorited) {
-      pushFavoriteDB();
-    } else {
-      removeFavoriteDB();
-    }*/
- 
-  
+
   useEffect( () => {
     console.log(favorited + 'USE EFFECT');
+
     /*let isMounted = true;
     //console.log(favorited + 'USE EFFECT');
     if(isMounted) {
@@ -91,11 +84,10 @@ export default function StockPage(props) {
       console.log(favorited + 'USE EFFECT RETURN');
       isMounted = false;
     } */
+  
   }, [favorited]);
 
  
-
-
   const pushFavoriteDB = () => {
     let uid = firebase.auth().currentUser.uid;
     const newFavorite = database()
@@ -128,11 +120,6 @@ export default function StockPage(props) {
     console.log(favorited);
     const action = favorited ? 'removed from' : 'added to';
     console.log(`${companySymbol} ${action} Favorites!`);
-    if(favorited) {
-      pushFavoriteDB();
-   } else {
-      removeFavoriteDB();
-   }
   };
 
   const joinChatPressed = () => {
