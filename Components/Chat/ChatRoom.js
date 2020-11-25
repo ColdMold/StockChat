@@ -42,6 +42,8 @@ export default function ChatRoom(props) {
     return firebase.auth().currentUser.uid;
   };
 
+  // IDEA: take advantage of multiple useEffects for
+  // live updates possibly?
   useEffect(() => {
     // Gets User ID
     fetchUserId(getUserId());
@@ -86,6 +88,7 @@ export default function ChatRoom(props) {
   const onSend = useCallback(
     (message = []) => {
       // it appears only one message is sent at a time, so we access using messages[0]
+      // try moving this to .then
       setMessages((previousMessages) =>
         GiftedChat.append(previousMessages, message),
       );

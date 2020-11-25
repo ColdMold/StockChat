@@ -11,6 +11,17 @@ import {
   List,
 } from 'react-native-paper';
 import compactFormat from 'cldr-compact-number';
+import {Dimensions} from 'react-native';
+import {
+  VictoryChart,
+  VictoryLine,
+  VictoryContainer,
+  VictoryTooltip,
+  VictoryVoronoiContainer,
+  VictoryTheme,
+  VictoryAxis,
+  VictoryLabel,
+} from 'victory-native';
 
 export default function StockPage(props) {
   const [companySymbol, setCompanySymbol] = useState('');
@@ -22,14 +33,18 @@ export default function StockPage(props) {
   const [showMoreShown, setShowMoreShown] = useState(false);
   const [advStatsResponse, setAdvStatsResponse] = useState([]);
   const [companyInfoResponse, setCompanyInfoResponse] = useState([]);
+  const [companyIntradayData, setCompanyIntradayData] = useState([]);
 
+  const screenWidth = Dimensions.get('window').width;
+
+  // place each of these into their own method
   const loadCompanyResponses = async (api_key) => {
     const {companySymbol, companyName} = props.route.params;
     setCompanySymbol(companySymbol);
     setCompanyName(companyName);
 
     const advStatsFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/advanced-stats?token=${api_key}`;
-    console.log(advStatsFetchURL);
+    console.log('advStatsURL: ' + advStatsFetchURL);
     try {
       await fetch(advStatsFetchURL)
         .then((response) => response.json())
@@ -42,12 +57,24 @@ export default function StockPage(props) {
     }
 
     const companyInfoFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/company?token=${api_key}`;
-    console.log(companyInfoFetchURL);
+    console.log('companyInfoURL: ' + companyInfoFetchURL);
     try {
       await fetch(companyInfoFetchURL)
         .then((response) => response.json())
         .then((responseJson) => {
           setCompanyInfoResponse(responseJson);
+        });
+    } catch (error) {
+      console.error(error);
+    }
+
+    const companyIntradayURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/intraday-prices?token=${api_key}&chartLast=390`;
+    console.log('intradayURL: ' + companyIntradayURL);
+    try {
+      await fetch(companyIntradayURL)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          setCompanyIntradayData(responseJson);
         });
     } catch (error) {
       console.error(error);
@@ -91,6 +118,39 @@ export default function StockPage(props) {
     setForumJoined(!forumJoined);
     const action = forumJoined ? 'left' : 'joined';
     console.log(`You ${action} ${companySymbol} forum!`);
+  };
+
+  const chartDisplay = () => {
+    // Right now this logs 3 times, I think because of
+    // All 3 loadResponse calls being in the same method
+    // Corresponding with 3 separate rerenders
+    console.log('chartDisplay');
+    const getMinMaxOfDataPrices = () => {
+      const priceArray = companyIntradayData.map((data) => data.high);
+      return [Math.min(...priceArray) * 0.9, Math.max(...priceArray) * 1.15];
+    };
+
+    return (
+      <View>
+        <VictoryChart width={screenWidth} theme={VictoryTheme.material}>
+          <VictoryAxis crossAxis tickFormat={() => ''} />
+          <VictoryAxis dependentAxis domain={getMinMaxOfDataPrices()} />
+          <VictoryLine
+            data={companyIntradayData.filter((dataPoint) => {
+              let minutes = dataPoint.minute.split(':')[1];
+              return minutes % 10 === 0;
+            })}
+            y={(datum) => datum.high}
+            x={(datum) => datum.minute}
+            style={{
+              data: {stroke: '#c43a31'},
+              parent: {border: '1px solid #ccc'},
+            }}
+            labelComponent={<VictoryLabel text={''} />}
+          />
+        </VictoryChart>
+      </View>
+    );
   };
 
   const bannerDisplay = () => {
@@ -140,10 +200,6 @@ export default function StockPage(props) {
   };
 
   // TODO IDEAS HERE:
-  // 1. Add a function to FORMAT the response returns in the table
-  //    Will need to format numbers like avg30volume / 30 to 4 digits
-  //    Format mkt cap from 8,000,000,000 to 8B, and so on and so forth
-
   // 2. Create custom data table component to make this look cleaner
   //    and more understandable
 
@@ -266,6 +322,7 @@ export default function StockPage(props) {
     <Container style={styles.container}>
       <Content>
         {bannerDisplay()}
+        {chartDisplay()}
         {dataTableDisplay()}
         {descriptionTextDisplay()}
       </Content>
@@ -296,5 +353,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: 'green',
     fontWeight: 'bold',
+  },
+  chartView: {
+    marginLeft: '5%',
+    marginRight: '5%',
+    alignItems: 'center',
   },
 });
