@@ -70,6 +70,9 @@ export default function StockPage(props) {
       console.error('Load2: ' + error);
     }
 
+    // TODO: Test if we can get live updates based on the response
+    // Using ACTUAL intraday endpoint - it doesn't change until it updates
+    // accurate data ... sandbox changes every second randomizing data
     const companyIntradayURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/intraday-prices?token=${api_key}&chartLast=390`;
     console.log('intradayURL: ' + companyIntradayURL);
     try {
@@ -94,30 +97,23 @@ export default function StockPage(props) {
     }
 
     return () => {
-      console.log('StockPage useEffect Return:');
       isMounted = false;
     };
   }, []);
 
   useEffect(() => {
-    console.log(favorited + 'USE EFFECT');
-
     let isMounted = true;
-    //console.log(favorited + 'USE EFFECT');
     if (isMounted) {
       let uid = firebase.auth().currentUser.uid;
-      console.log('userid: ' + uid);
-      console.log('companySymbol: ' + companySymbol);
 
       if (favorited) {
         pushFavoriteDB(uid);
       } else {
-        removeFavoriteDB();
+        removeFavoriteDB(uid);
       }
     }
 
     return () => {
-      console.log(favorited + 'USE EFFECT RETURN');
       isMounted = false;
     };
   }, [favorited]);
@@ -131,8 +127,7 @@ export default function StockPage(props) {
     console.log('successful push to db');
   };
 
-  const removeFavoriteDB = () => {
-    let uid = firebase.auth().currentUser.uid;
+  const removeFavoriteDB = (uid) => {
     const deleteFavorite = database()
       .ref(`${uid}/favorites`)
       .update({
@@ -145,7 +140,6 @@ export default function StockPage(props) {
   // and whether or not a user is a part of a forum
   // DECIDE: Do we want to have separations between the stocks a user can
   // favorite and join chat / join forums?
-
   const favoritePressed = () => {
     console.log(favorited);
     setFavorited(!favorited);
@@ -173,32 +167,49 @@ export default function StockPage(props) {
     // Corresponding with 3 separate rerenders
     console.log('chartDisplay');
 
-    return (
-      <View>
-        <VictoryChart
-          width={screenWidth}
-          theme={VictoryTheme.material}
-          containerComponent={
-            <VictoryVoronoiContainer labels={({datum}) => `${datum.average}`} />
-          }>
-          <VictoryAxis fixLabelOverlap={true} />
-          <VictoryAxis dependentAxis />
-          <VictoryLine
-            data={companyIntradayData.filter((dataPoint) => {
-              let minutes = dataPoint.minute.split(':')[1];
-              return minutes % 5 === 0;
-            })}
-            y={(datum) => datum.average}
-            x={(datum) => datum.minute}
-            style={{
-              data: {stroke: '#c43a31'},
-              parent: {border: '1px solid #ccc'},
-            }}
-            labelComponent={<VictoryLabel text={''} />}
-          />
-        </VictoryChart>
-      </View>
-    );
+    const getDomain = () => {
+      const averagePrices = companyIntradayData
+        .map((dataPoint) => dataPoint.average)
+        .filter((average) => average != null);
+
+      return [
+        Math.min(...averagePrices) * 0.98,
+        Math.max(...averagePrices) * 1.2,
+      ];
+    };
+
+    if (companyIntradayData.length > 0) {
+      return (
+        <View>
+          <VictoryChart
+            minDomain={{y: getDomain()[0]}}
+            domain={companyIntradayData.length > 0 ? null : {y: getDomain()}}
+            width={screenWidth}
+            theme={VictoryTheme.material}
+            containerComponent={
+              <VictoryVoronoiContainer
+                labels={({datum}) => `${datum.average}`}
+              />
+            }>
+            <VictoryAxis fixLabelOverlap={true} />
+            <VictoryAxis dependentAxis />
+            <VictoryLine
+              data={companyIntradayData.filter((dataPoint) => {
+                let minutes = dataPoint.minute.split(':')[1];
+                return minutes % 5 === 0;
+              })}
+              y={(datum) => datum.average}
+              x={(datum) => datum.minute}
+              style={{
+                data: {stroke: '#c43a31'},
+                parent: {border: '1px solid #ccc'},
+              }}
+              labelComponent={<VictoryLabel text={''} />}
+            />
+          </VictoryChart>
+        </View>
+      );
+    }
   };
 
   const bannerDisplay = () => {
