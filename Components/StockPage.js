@@ -71,6 +71,8 @@ export default function StockPage(props) {
       let uid = firebase.auth().currentUser.uid;
       let favoriteRef = database().ref(`${uid}/favorites`);
       if(favoriteRef) {
+        //does get correct path 
+        console.log(favoriteRef);
         favoriteRef.on('value', (snapshot) => {
           console.log(snapshot.val() + 'READING');
           //currently snapshot.val() returns null
