@@ -59,3 +59,7 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 node_modules
+android/app/.project
+.vscode/settings.json
+ios/Podfile
+ios/Podfile

@@ -21,4 +21,5 @@ export const HARDCODED_COMPANY_SYMBOLS_ARRAY = [
   'AMZN',
   'GOOGL',
   'FSLY',
+  'PLTR',
 ];

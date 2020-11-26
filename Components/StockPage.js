@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import {Container, Content} from 'native-base';
 import {
@@ -11,10 +11,27 @@ import {
   List,
 } from 'react-native-paper';
 import compactFormat from 'cldr-compact-number';
+import {Dimensions} from 'react-native';
+import {
+  VictoryChart,
+  VictoryLine,
+  VictoryContainer,
+  VictoryTooltip,
+  VictoryVoronoiContainer,
+  VictoryTheme,
+  VictoryAxis,
+  VictoryLabel,
+} from 'victory-native';
+import {firebase} from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 
 export default function StockPage(props) {
-  const [companySymbol, setCompanySymbol] = useState('');
-  const [companyName, setCompanyName] = useState('');
+  const [companySymbol, setCompanySymbol] = useState(
+    props.route.params.companySymbol,
+  );
+  const [companyName, setCompanyName] = useState(
+    props.route.params.companyName,
+  );
   const [favorited, setFavorited] = useState(false);
   const [chatJoined, setChatJoined] = useState(false);
   const [forumJoined, setForumJoined] = useState(false);
@@ -22,45 +39,100 @@ export default function StockPage(props) {
   const [showMoreShown, setShowMoreShown] = useState(false);
   const [advStatsResponse, setAdvStatsResponse] = useState([]);
   const [companyInfoResponse, setCompanyInfoResponse] = useState([]);
+  const [companyIntradayData, setCompanyIntradayData] = useState([]);
 
-  const loadCompanyResponses = async (api_key) => {
-    const {companySymbol, companyName} = props.route.params;
-    setCompanySymbol(companySymbol);
-    setCompanyName(companyName);
+  const screenWidth = Dimensions.get('window').width;
 
-    const advStatsFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/advanced-stats?token=${api_key}`;
-    console.log(advStatsFetchURL);
+  const loadCompanyResponses = async (cloud_api_key, sandbox_api_key) => {
+    const advStatsFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/advanced-stats?token=${sandbox_api_key}`;
+    const companyInfoFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/company?token=${sandbox_api_key}`;
+    const companyIntradayURL = `https://cloud.iexapis.com/stable/stock/${companySymbol}/intraday-prices?token=${cloud_api_key}&chartLast=390`;
+    console.log('intradayURL: ' + companyIntradayURL);
+    console.log('advStatsURL: ' + advStatsFetchURL);
+    console.log('companyInfoURL: ' + companyInfoFetchURL);
+
+    let advStatsJson = [];
+    let companyInfoJson = [];
+    let intradayJson = [];
     try {
       await fetch(advStatsFetchURL)
         .then((response) => response.json())
         .then((responseJson) => {
-          console.log(responseJson);
-          setAdvStatsResponse(responseJson);
+          advStatsJson = responseJson;
+        })
+        .then(() => {
+          fetch(companyInfoFetchURL)
+            .then((response) => response.json())
+            .then((responseJson) => {
+              companyInfoJson = responseJson;
+            })
+            .then(() => {
+              fetch(companyIntradayURL)
+                .then((response) => response.json())
+                .then((responseJson) => {
+                  intradayJson = responseJson;
+                })
+                .then(() => {
+                  setAdvStatsResponse(advStatsJson);
+                  setCompanyInfoResponse(companyInfoJson);
+                  setCompanyIntradayData(intradayJson);
+                });
+            });
         });
     } catch (error) {
-      console.error(error);
-    }
-
-    const companyInfoFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/company?token=${api_key}`;
-    console.log(companyInfoFetchURL);
-    try {
-      await fetch(companyInfoFetchURL)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          setCompanyInfoResponse(responseJson);
-        });
-    } catch (error) {
-      console.error(error);
+      console.error('Loading Responses ' + error);
     }
   };
 
   // No dependency array, so this hook will act like ComponentDidMount()
   // We want to have a live update eventually on the graph (when graph is implemented)
   useEffect(() => {
+    let isMounted = true;
     // Hard coded api_key. Will need to change this
-    let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
-    loadCompanyResponses(api_key);
+    let sandbox_api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
+    let cloud_api_key = 'pk_5f709541c67045d4baf49eb884efbdda';
+    if (isMounted) {
+      loadCompanyResponses(cloud_api_key, sandbox_api_key);
+    }
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (isMounted) {
+      let uid = firebase.auth().currentUser.uid;
+
+      if (favorited) {
+        pushFavoriteDB(uid);
+      } else {
+        removeFavoriteDB(uid);
+      }
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [favorited]);
+
+  const pushFavoriteDB = (uid) => {
+    const newFavorite = database()
+      .ref(`${uid}/favorites`)
+      .update({
+        [companySymbol]: true,
+      });
+    console.log('successful push to db');
+  };
+
+  const removeFavoriteDB = (uid) => {
+    const deleteFavorite = database()
+      .ref(`${uid}/favorites`)
+      .update({
+        [companySymbol]: null,
+      });
+  };
 
   // TODO: Use these functions to implement behavior when clicking chat/favorites/forums buttons
   // We will have to load in favorites state in useEffect from database
@@ -68,7 +140,10 @@ export default function StockPage(props) {
   // DECIDE: Do we want to have separations between the stocks a user can
   // favorite and join chat / join forums?
   const favoritePressed = () => {
+    console.log(favorited);
     setFavorited(!favorited);
+
+    console.log(favorited);
     const action = favorited ? 'removed from' : 'added to';
     console.log(`${companySymbol} ${action} Favorites!`);
   };
@@ -85,7 +160,67 @@ export default function StockPage(props) {
     console.log(`You ${action} ${companySymbol} forum!`);
   };
 
+  const chartDisplay = () => {
+    // Right now this logs 3 times, I think because of
+    // All 3 loadResponse calls being in the same method
+    // Corresponding with 3 separate rerenders
+    console.log('chartDisplay');
+
+    const getDomain = () => {
+      const averagePrices = companyIntradayData
+        .map((dataPoint) => dataPoint.average)
+        .filter((average) => average != null);
+
+      return [
+        Math.min(...averagePrices) * 0.99,
+        Math.max(...averagePrices) * 1.1,
+      ];
+    };
+
+    if (companyIntradayData.length > 0) {
+      return (
+        <View>
+          <Title style={styles.priceText}>
+            Last Price{': '}
+            {
+              companyIntradayData.map((dataPoint) => dataPoint.average)[
+                companyIntradayData.length - 1
+              ]
+            }
+          </Title>
+          <VictoryChart
+            minDomain={{y: getDomain()[0]}}
+            domain={companyIntradayData.length > 0 ? null : {y: getDomain()}}
+            width={screenWidth}
+            theme={VictoryTheme.material}
+            containerComponent={
+              <VictoryVoronoiContainer
+                labels={({datum}) => `${datum.average}`}
+              />
+            }>
+            <VictoryAxis fixLabelOverlap={true} />
+            <VictoryAxis dependentAxis />
+            <VictoryLine
+              data={companyIntradayData.filter((dataPoint) => {
+                let minutes = dataPoint.minute.split(':')[1];
+                return minutes % 5 === 0;
+              })}
+              y={(datum) => datum.average}
+              x={(datum) => datum.minute}
+              style={{
+                data: {stroke: '#c43a31'},
+                parent: {border: '1px solid #ccc'},
+              }}
+              labelComponent={<VictoryLabel text={''} />}
+            />
+          </VictoryChart>
+        </View>
+      );
+    }
+  };
+
   const bannerDisplay = () => {
+    console.log('bannerDisplay()');
     // Main Rendering Return for the Functional Component
     const getActionLabel = (action) => {
       switch (action) {
@@ -132,10 +267,6 @@ export default function StockPage(props) {
   };
 
   // TODO IDEAS HERE:
-  // 1. Add a function to FORMAT the response returns in the table
-  //    Will need to format numbers like avg30volume / 30 to 4 digits
-  //    Format mkt cap from 8,000,000,000 to 8B, and so on and so forth
-
   // 2. Create custom data table component to make this look cleaner
   //    and more understandable
 
@@ -144,6 +275,8 @@ export default function StockPage(props) {
   //    help user discern between categories and values.
   // 5. Add expansion if a user wants to view "more stats".
   const dataTableDisplay = () => {
+    console.log('dataTableDisplay()');
+
     return (
       <DataTable>
         <DataTable.Header>
@@ -152,7 +285,9 @@ export default function StockPage(props) {
 
         <DataTable.Row>
           <DataTable.Cell>
-            <DataTable.Cell>Mkt Cap: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>Mkt Cap: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {compactFormat(advStatsResponse.marketcap, 'en', null, {
                 significantDigits: 3,
@@ -161,7 +296,9 @@ export default function StockPage(props) {
             </DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
-            <DataTable.Cell>Avg Vol: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>Avg Vol: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {compactFormat(advStatsResponse.avg30Volume / 30, 'en', null, {
                 significantDigits: 3,
@@ -173,13 +310,17 @@ export default function StockPage(props) {
 
         <DataTable.Row>
           <DataTable.Cell>
-            <DataTable.Cell>52 Wk Low: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>52 Wk Low: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {parseFloat(advStatsResponse.week52low).toFixed(2)}
             </DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
-            <DataTable.Cell>52 Wk High: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>52 Wk High: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {parseFloat(advStatsResponse.week52high).toFixed(2)}
             </DataTable.Cell>
@@ -188,7 +329,9 @@ export default function StockPage(props) {
 
         <DataTable.Row>
           <DataTable.Cell>
-            <DataTable.Cell>Div/Yield: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>Div/Yield: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {advStatsResponse.dividendYield == null
                 ? 'N/A'
@@ -196,7 +339,9 @@ export default function StockPage(props) {
             </DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
-            <DataTable.Cell>Nxt Div: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>Nxt Div: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {advStatsResponse.nextDividendDate == null
                 ? 'N/A'
@@ -207,13 +352,17 @@ export default function StockPage(props) {
 
         <DataTable.Row>
           <DataTable.Cell>
-            <DataTable.Cell>P/E Ratio: </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>P/E Ratio: </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {parseFloat(advStatsResponse.peRatio).toFixed(2)}
             </DataTable.Cell>
           </DataTable.Cell>
           <DataTable.Cell>
-            <DataTable.Cell>EPS (TTM): </DataTable.Cell>
+            <DataTable.Cell>
+              <Text style={styles.statsTitle}>EPS (TTM): </Text>
+            </DataTable.Cell>
             <DataTable.Cell>
               {parseFloat(advStatsResponse.ttmEPS).toFixed(3)}
             </DataTable.Cell>
@@ -232,6 +381,8 @@ export default function StockPage(props) {
   };
 
   const descriptionTextDisplay = () => {
+    console.log('descriptionTextDisplay()');
+
     return (
       <Card>
         <Card.Title title="About" />
@@ -252,17 +403,18 @@ export default function StockPage(props) {
     );
   };
 
-  // We don't have a join chat because adding a stock to favorites
-  // joins their chat
-  return (
-    <Container style={styles.container}>
-      <Content>
-        {bannerDisplay()}
-        {dataTableDisplay()}
-        {descriptionTextDisplay()}
-      </Content>
-    </Container>
-  );
+  return useMemo(() => {
+    return (
+      <Container style={styles.container}>
+        <Content>
+          {bannerDisplay()}
+          {chartDisplay()}
+          {dataTableDisplay()}
+          {descriptionTextDisplay()}
+        </Content>
+      </Container>
+    );
+  }, [companyIntradayData]);
 }
 
 const styles = StyleSheet.create({
@@ -287,6 +439,18 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     marginTop: 10,
     color: 'green',
+    fontWeight: 'bold',
+  },
+  chartView: {
+    marginLeft: '5%',
+    marginRight: '5%',
+    alignItems: 'center',
+  },
+  priceText: {
+    fontWeight: 'bold',
+    marginLeft: '5%',
+  },
+  statsTitle: {
     fontWeight: 'bold',
   },
 });
