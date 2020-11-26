@@ -64,6 +64,26 @@ export default function StockPage(props) {
     loadCompanyResponses(api_key);
   }, []);
 
+  //trying to read favorites from DB on launch
+  useEffect(() => {
+    let isMounted = true;
+    if (isMounted) {
+      let uid = firebase.auth().currentUser.uid;
+      let favoriteRef = database().ref(`${uid}/favorites`);
+      if(favoriteRef) {
+        favoriteRef.on('value', (snapshot) => {
+          console.log(snapshot.val() + 'READING');
+          //currently snapshot.val() returns null
+        });
+      }
+    }
+
+    return () => {
+      isMounted = false;
+      console.log('isMounted FALSE');
+    };
+  }, []);
+
   useEffect(() => {
     console.log(favorited + 'USE EFFECT');
 
