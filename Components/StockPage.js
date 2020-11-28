@@ -69,13 +69,12 @@ export default function StockPage(props) {
     let isMounted = true;
     if (isMounted) {
       let uid = firebase.auth().currentUser.uid;
-      let favoriteRef = database().ref(`${uid}/favorites`);
+      let favoriteRef = database().ref(`${uid}/favorites/${companySymbol}`);
       if(favoriteRef) {
         //does get correct path 
         console.log(favoriteRef);
         favoriteRef.on('value', (snapshot) => {
-          console.log(snapshot.val() + 'READING');
-          //currently snapshot.val() returns null
+          console.log('Favorited on read from DB? ' + snapshot.val());
         });
       }
     }
