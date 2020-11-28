@@ -81,7 +81,12 @@ export default function StockPage(props) {
         console.log(favoriteRef);
         favoriteRef.on('value', (snapshot) => {
           console.log('Favorited on read from DB? ' + snapshot.val());
+          if(snapshot.val() === 'true' || snapshot.val() === 'false') {
+            setFavorited(snapshot.val());
+          }
         });
+      } else {
+        console.log('favoriteRef is ' + favoriteRef.toString());
       }
     }
 
@@ -91,9 +96,10 @@ export default function StockPage(props) {
     };
   };
   
-
   useEffect(() => {
-    pushOrRemove();
+    if(favorited) {
+      pushOrRemove();
+    }
   }, [favorited]);
 
   const pushOrRemove = () => {
