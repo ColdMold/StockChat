@@ -5,7 +5,7 @@ import StockPage from '../Components/StockPage';
 import ChatRoom from '../Components/Chat/ChatRoom';
 import ProfileTab from '../Components/AppTabNavigator/ProfileTab';
 import ResetPasswordScreen from '../Components/ResetPasswordScreen';
-import AboutUsScreen from '../Components/AboutUsScreen'
+import AboutUsScreen from '../Components/AboutUsScreen';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {TAB_NAMES} from '../Components/Utils/Constants';
 
@@ -54,9 +54,9 @@ export default function AppStack() {
           title: `${route.params.companySymbol} Chat Room`,
         })}
       />
-      <Stack.Screen name ='Reset Password' component={ResetPasswordScreen}/>
-      <Stack.Screen name = 'About Us' component={AboutUsScreen}/>
-      <Stack.Screen name ='Profile' component={ProfileTab}/>
+      <Stack.Screen name="Reset Password" component={ResetPasswordScreen} />
+      <Stack.Screen name="About Us" component={AboutUsScreen} />
+      <Stack.Screen name="Profile" component={ProfileTab} />
     </Stack.Navigator>
   );
 }
