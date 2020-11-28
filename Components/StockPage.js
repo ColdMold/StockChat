@@ -62,10 +62,16 @@ export default function StockPage(props) {
     // Hard coded api_key. Will need to change this
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
     loadCompanyResponses(api_key);
+
+    //trying to read favorites from DB on launch
+    readFavoritesFromDB();
+
   }, []);
 
   //trying to read favorites from DB on launch
-  useEffect(() => {
+ 
+
+  const readFavoritesFromDB = () => {
     let isMounted = true;
     if (isMounted) {
       let uid = firebase.auth().currentUser.uid;
@@ -83,9 +89,14 @@ export default function StockPage(props) {
       isMounted = false;
       console.log('isMounted FALSE');
     };
-  }, []);
+  };
+  
 
   useEffect(() => {
+    pushOrRemove();
+  }, [favorited]);
+
+  const pushOrRemove = () => {
     console.log(favorited + 'USE EFFECT');
 
     let isMounted = true;
@@ -106,7 +117,7 @@ export default function StockPage(props) {
       console.log(favorited + 'USE EFFECT RETURN');
       isMounted = false;
     };
-  }, [favorited]);
+  };
 
   const pushFavoriteDB = (uid) => {
     const newFavorite = database()
