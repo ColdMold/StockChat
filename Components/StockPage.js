@@ -430,16 +430,18 @@ export default function StockPage(props) {
     );
   };
 
-  return (
-    <Container style={styles.container}>
-      <Content>
-        {bannerDisplay()}
-        {chartDisplay()}
-        {dataTableDisplay()}
-        {descriptionTextDisplay()}
-      </Content>
-    </Container>
-  );
+  return useMemo(() => {
+    return (
+      <Container style={styles.container}>
+        <Content>
+          {bannerDisplay()}
+          {chartDisplay()}
+          {dataTableDisplay()}
+          {descriptionTextDisplay()}
+        </Content>
+      </Container>
+    );
+  }, [companyIntradayData, favorited]);
 }
 
 const styles = StyleSheet.create({
