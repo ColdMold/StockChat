@@ -40,6 +40,7 @@ export default function StockPage(props) {
   const [advStatsResponse, setAdvStatsResponse] = useState([]);
   const [companyInfoResponse, setCompanyInfoResponse] = useState([]);
   const [companyIntradayData, setCompanyIntradayData] = useState([]);
+  const [initialPageRender, setInitialPageRender] = useState(true);
 
   const screenWidth = Dimensions.get('window').width;
 
@@ -87,11 +88,14 @@ export default function StockPage(props) {
   // No dependency array, so this hook will act like ComponentDidMount()
   // We want to have a live update eventually on the graph (when graph is implemented)
   useEffect(() => {
+    console.log('useEffect1');
     let isMounted = true;
-    // Hard coded api_key. Will need to change this
+
     let sandbox_api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
     let cloud_api_key = 'pk_5f709541c67045d4baf49eb884efbdda';
     if (isMounted) {
+      // loading in company data
+      readFavoritesFromDB();
       loadCompanyResponses(cloud_api_key, sandbox_api_key);
     }
 
@@ -100,16 +104,26 @@ export default function StockPage(props) {
     };
   }, []);
 
+  //trying to read favorites from DB on launch
+  const readFavoritesFromDB = () => {
+    console.log('reading favorites from DB');
+    let uid = firebase.auth().currentUser.uid;
+    let favoriteRef = database().ref(`${uid}/favorites/${companySymbol}`);
+    favoriteRef.once('value', (snapshot) => {
+      setInitialPageRender(false);
+      console.log('Favorited on read from DB? ' + snapshot.val());
+      if (snapshot.val() !== null) {
+        setFavorited(snapshot.val());
+      }
+    });
+  };
+
   useEffect(() => {
+    console.log('useEffect 2');
+
     let isMounted = true;
     if (isMounted) {
-      let uid = firebase.auth().currentUser.uid;
-
-      if (favorited) {
-        pushFavoriteDB(uid);
-      } else {
-        removeFavoriteDB(uid);
-      }
+      pushOrRemove();
     }
 
     return () => {
@@ -117,8 +131,22 @@ export default function StockPage(props) {
     };
   }, [favorited]);
 
+  const pushOrRemove = () => {
+    console.log(favorited + 'USE EFFECT');
+    let uid = firebase.auth().currentUser.uid;
+
+    if (!initialPageRender) {
+      if (favorited === true) {
+        pushFavoriteDB(uid);
+      } else if (favorited === false) {
+        removeFavoriteDB(uid);
+      }
+    }
+  };
+
   const pushFavoriteDB = (uid) => {
-    const newFavorite = database()
+    console.log('pushing favorite to DB');
+    database()
       .ref(`${uid}/favorites`)
       .update({
         [companySymbol]: true,
@@ -127,37 +155,12 @@ export default function StockPage(props) {
   };
 
   const removeFavoriteDB = (uid) => {
-    const deleteFavorite = database()
+    console.log('removing favorite from DB');
+    database()
       .ref(`${uid}/favorites`)
       .update({
         [companySymbol]: null,
       });
-  };
-
-  // TODO: Use these functions to implement behavior when clicking chat/favorites/forums buttons
-  // We will have to load in favorites state in useEffect from database
-  // and whether or not a user is a part of a forum
-  // DECIDE: Do we want to have separations between the stocks a user can
-  // favorite and join chat / join forums?
-  const favoritePressed = () => {
-    console.log(favorited);
-    setFavorited(!favorited);
-
-    console.log(favorited);
-    const action = favorited ? 'removed from' : 'added to';
-    console.log(`${companySymbol} ${action} Favorites!`);
-  };
-
-  const joinChatPressed = () => {
-    setChatJoined(!chatJoined);
-    const action = chatJoined ? 'left' : 'joined';
-    console.log(`You ${action} ${companySymbol} chat!`);
-  };
-
-  const joinForumPressed = () => {
-    setForumJoined(!forumJoined);
-    const action = forumJoined ? 'left' : 'joined';
-    console.log(`You ${action} ${companySymbol} forum!`);
   };
 
   const chartDisplay = () => {
@@ -217,6 +220,30 @@ export default function StockPage(props) {
         </View>
       );
     }
+  };
+
+  // TODO: Use these functions to implement behavior when clicking chat/favorites/forums buttons
+  // We will have to load in favorites state in useEffect from database
+  // and whether or not a user is a part of a forum
+  // DECIDE: Do we want to have separations between the stocks a user can
+  // favorite and join chat / join forums?
+  const favoritePressed = () => {
+    setFavorited((prevFav) => !prevFav);
+
+    const action = favorited ? 'removed from' : 'added to';
+    console.log(`${companySymbol} ${action} Favorites!`);
+  };
+
+  const joinChatPressed = () => {
+    setChatJoined(!chatJoined);
+    const action = chatJoined ? 'left' : 'joined';
+    console.log(`You ${action} ${companySymbol} chat!`);
+  };
+
+  const joinForumPressed = () => {
+    setForumJoined(!forumJoined);
+    const action = forumJoined ? 'left' : 'joined';
+    console.log(`You ${action} ${companySymbol} forum!`);
   };
 
   const bannerDisplay = () => {
@@ -414,7 +441,7 @@ export default function StockPage(props) {
         </Content>
       </Container>
     );
-  }, [companyIntradayData]);
+  }, [companyIntradayData, favorited]);
 }
 
 const styles = StyleSheet.create({

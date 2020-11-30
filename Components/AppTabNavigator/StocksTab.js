@@ -40,7 +40,7 @@ class StocksTab extends Component {
     //deleted .env for now as it was not even working, and technically is still not even secure
 
     // Array of company symbols. Ideally we will get this information from the user's liked / purchased stocks.
-    let companySymbolsArray = HARDCODED_COMPANY_SYMBOLS_ARRAY;
+    let companySymbolsArray = this.props.stocks;
 
     let companySymbols = companySymbolsArray.join(',').toLowerCase();
 

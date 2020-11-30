@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {AuthContext} from '../Navigation/AuthProvider';
 import StocksTab from './AppTabNavigator/StocksTab';
@@ -15,17 +15,34 @@ const Tab = createBottomTabNavigator();
 
 export default function HomeScreen(props) {
   const {user, logout} = useContext(AuthContext);
-  const companySymbolsArray = HARDCODED_COMPANY_SYMBOLS_ARRAY;
+
+  // Will need to pull this in from favorites later
+  const [companySymbolsArray, setCompanySymbolsArray] = useState(
+    HARDCODED_COMPANY_SYMBOLS_ARRAY,
+  );
 
   return (
-    <Tab.Navigator
-      screenProps={{
-        companySymbolsArray: companySymbolsArray,
-      }}>
-      <Tab.Screen name={TAB_NAMES.stocks} component={StocksTab} />
+    <Tab.Navigator>
+      <Tab.Screen
+        name={TAB_NAMES.stocks}
+        children={() => (
+          <StocksTab
+            stocks={companySymbolsArray}
+            navigation={props.navigation}
+          />
+        )}
+      />
       <Tab.Screen name={TAB_NAMES.forums} component={ForumsTab} />
       <Tab.Screen name={TAB_NAMES.createPost} component={CreatePostTab} />
-      <Tab.Screen name={TAB_NAMES.chatMsgs} component={ChatMsgsTab} />
+      <Tab.Screen
+        name={TAB_NAMES.chatMsgs}
+        children={() => (
+          <ChatMsgsTab
+            stocks={companySymbolsArray}
+            navigation={props.navigation}
+          />
+        )}
+      />
       <Tab.Screen name={TAB_NAMES.profile} component={ProfileTab} />
     </Tab.Navigator>
   );
