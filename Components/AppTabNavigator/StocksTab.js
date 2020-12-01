@@ -5,6 +5,8 @@ import {View, StyleSheet} from 'react-native';
 
 import {Container, Content, Icon} from 'native-base';
 import {HARDCODED_COMPANY_SYMBOLS_ARRAY} from '../Utils/Constants';
+import {firebase} from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 
 class StocksTab extends Component {
   static navigationOptions = {
@@ -23,6 +25,10 @@ class StocksTab extends Component {
         companyNames: [],
         companySymbols: [],
       },
+      favoritedCompanies: {
+        //companyNames: [],
+        companySymbols: [],
+      },
     };
   }
 
@@ -30,9 +36,69 @@ class StocksTab extends Component {
     //NetInfo.isConnected.fetch().then(isConnected => {
     if (true) {
       this.getStockCardData();
+      this.readFavorites();
     }
+
+    //this.readFavorites();
+
+    //let companySymbols = this.state.favoritedCompanies.companySymbols;
+
+    /*
+    let _this = this;
+
+    let display = companySymbols.map(function (companySymbol, index) {
+      const compSymbol = companySymbols[index];
+      /*onPress={() => _this.navigateToPage(companySymbol, companyName)}>*/
+
+      /*
+      return (
+        <View key={compSymbol}>
+          <Card
+            style={styles.card}>
+            <Card.Title title={compSymbol} />
+          </Card>
+        </View>
+      );
+    });
+
+    return (
+      <Container style={styles.container}>
+        <Content style={styles.context}>{display}</Content>
+      </Container>
+    );
+    */
+    
   }
 
+  componentDidUpdate(){
+
+  }
+
+  readFavorites() {
+    console.log('reading favorites from DB');
+    let uid = firebase.auth().currentUser.uid;
+    let favoriteRef = database().ref(`${uid}/favorites/`);
+    let favorites = [];
+    favoriteRef.once('value', (snapshot) => {
+      //setInitialPageRender(false);
+      snapshot.forEach(function(childSnapshot) {
+        console.log(childSnapshot.key);
+        console.log(childSnapshot.val());
+        if(childSnapshot.val() === true) {
+          favorites.push(childSnapshot.key);
+        }
+      });
+      console.log(favorites);
+      this.setState({
+        favoritedCompanies: {
+          companySymbols: favorites,
+        },
+      });
+      /*if (snapshot.val() !== null) {
+        setFavorited(snapshot.val());
+      }*/
+    });
+  }
   async getStockCardData() {
     // Hard coded api_key. Will need to change this
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
