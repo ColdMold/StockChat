@@ -26,7 +26,7 @@ class StocksTab extends Component {
         companySymbols: [],
       },
       favoritedCompanies: {
-        //companyNames: [],
+        companyNames: [],
         companySymbols: [],
       },
     };
@@ -74,7 +74,8 @@ class StocksTab extends Component {
 
   }
 
-  readFavorites() {
+  async readFavorites() {
+    let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
     console.log('reading favorites from DB');
     let uid = firebase.auth().currentUser.uid;
     let favoriteRef = database().ref(`${uid}/favorites/`);
@@ -88,17 +89,34 @@ class StocksTab extends Component {
           favorites.push(childSnapshot.key);
         }
       });
-      console.log(favorites);
+    });
+
+    let companySymbolsAPI = favorites.join(',').toLowerCase();
+      const apiFetchURL = `https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbolsAPI}&token=${api_key}`;
+      let companyNamesAPI = [];
+      try {
+        let response = await fetch(apiFetchURL);
+        let responseJson = await response.json();
+  
+        // List of "Quotes" -- to see what this is go to this sample API response:
+        // https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=aapl,tsla,ibm&token=Tpk_77a598a1fa804de592413ba39f6b137a&period=annual
+        const quotes = Object.values(responseJson).map((stock) => stock.quote);
+        const companyNames = quotes.map((quote) => quote.companyName);
+        companyNamesAPI = companyNames;
+        console.log("TESTING TESTING  " + companyNames); // this doesn't print only console.error below
+      } catch (error) {
+        console.error(error);
+      }
+      console.log("FAVORITES" + favorites);
+      console.log("FAVORITE NAMES" + companyNamesAPI);
       this.setState({
         favoritedCompanies: {
+          companyNames: companyNamesAPI,
           companySymbols: favorites,
         },
       });
-      /*if (snapshot.val() !== null) {
-        setFavorited(snapshot.val());
-      }*/
-    });
   }
+  
   async getStockCardData() {
     // Hard coded api_key. Will need to change this
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
@@ -121,7 +139,6 @@ class StocksTab extends Component {
       const quotes = Object.values(responseJson).map((stock) => stock.quote);
       const companyNames = quotes.map((quote) => quote.companyName);
       // We can just use the passed list of array symbols instead of this map. However, I'll leave this in here for now just in case.
-
       this.setState({
         companyInfo: {
           companyNames: companyNames,
