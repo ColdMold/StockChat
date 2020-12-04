@@ -38,36 +38,6 @@ class StocksTab extends Component {
       this.getStockCardData();
       this.readFavorites();
     }
-
-    //this.readFavorites();
-
-    //let companySymbols = this.state.favoritedCompanies.companySymbols;
-
-    /*
-    let _this = this;
-
-    let display = companySymbols.map(function (companySymbol, index) {
-      const compSymbol = companySymbols[index];
-      /*onPress={() => _this.navigateToPage(companySymbol, companyName)}>*/
-
-      /*
-      return (
-        <View key={compSymbol}>
-          <Card
-            style={styles.card}>
-            <Card.Title title={compSymbol} />
-          </Card>
-        </View>
-      );
-    });
-
-    return (
-      <Container style={styles.container}>
-        <Content style={styles.context}>{display}</Content>
-      </Container>
-    );
-    */
-    
   }
 
   componentDidUpdate(){
