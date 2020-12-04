@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Card} from 'react-native-paper';
 
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 
 import {Container, Content, Icon} from 'native-base';
 import {HARDCODED_COMPANY_SYMBOLS_ARRAY} from '../Utils/Constants';
@@ -164,6 +164,8 @@ class StocksTab extends Component {
     // State updates after the code runs. Will need to do more reading on using update callback or componentDidMount / Update.
     let companyNames = this.state.companyInfo.companyNames;
     let companySymbols = this.state.companyInfo.companySymbols;
+    let favCompNames = this.state.favoritedCompanies.companyNames;
+    let favCompSymbols = this.state.favoritedCompanies.companySymbols;
 
     let _this = this;
 
@@ -180,8 +182,24 @@ class StocksTab extends Component {
       );
     });
 
+    let favDisplay = favCompNames.map(function (compNames, index) {
+      const favCompSymbol = favCompSymbols[index];
+      return (
+        <View key={favCompSymbol}>
+          <Card
+            style={styles.card}
+            onPress={() => _this.navigateToPage(favCompSymbol, compNames)}>
+            <Card.Title title={favCompSymbol} subtitle={compNames} />
+          </Card>
+        </View>
+      );
+    });
+
     return (
       <Container style={styles.container}>
+        <Text>My Favorites</Text>
+        <Content style={styles.context}>{favDisplay}</Content>
+        <Text>All Stocks</Text>
         <Content style={styles.context}>{display}</Content>
       </Container>
     );
