@@ -80,7 +80,7 @@ class StocksTab extends Component {
     let uid = firebase.auth().currentUser.uid;
     let favoriteRef = database().ref(`${uid}/favorites/`);
     let favorites = [];
-    favoriteRef.once('value', (snapshot) => {
+     await favoriteRef.once('value', (snapshot) => {
       //setInitialPageRender(false);
       snapshot.forEach(function(childSnapshot) {
         console.log(childSnapshot.key);
@@ -103,12 +103,11 @@ class StocksTab extends Component {
         const quotes = Object.values(responseJson).map((stock) => stock.quote);
         const companyNames = quotes.map((quote) => quote.companyName);
         companyNamesAPI = companyNames;
-        console.log("TESTING TESTING  " + companyNames); // this doesn't print only console.error below
       } catch (error) {
         console.error(error);
       }
-      console.log("FAVORITES" + favorites);
-      console.log("FAVORITE NAMES" + companyNamesAPI);
+      console.log("FAVORITES: " + favorites);
+      console.log("FAVORITE NAMES: " + companyNamesAPI);
       this.setState({
         favoritedCompanies: {
           companyNames: companyNamesAPI,
