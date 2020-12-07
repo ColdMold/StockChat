@@ -7,6 +7,7 @@ import {Container, Content, Icon} from 'native-base';
 import {HARDCODED_COMPANY_SYMBOLS_ARRAY} from '../Utils/Constants';
 import {firebase} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
+import { NavigationEvents } from '@react-navigation/native';
 
 class StocksTab extends Component {
   static navigationOptions = {
@@ -38,10 +39,24 @@ class StocksTab extends Component {
       this.getStockCardData();
       this.readFavorites();
     }
+
+    this.willFocusSubscription = this.props.navigation.addListener(
+      'willFocus',
+      () => {
+        //this.readFavorites();
+        console.log("BACK BUTTON");
+        //THIS DOES NOT PRINT AS EXPECTED
+      }
+    );
+
+  }
+
+  componentWillUnmount() {
+    this.willFocusSubscription.remove();
   }
 
   componentDidUpdate(){
-
+    //this.readFavorites();
   }
 
   async readFavorites() {
@@ -51,7 +66,6 @@ class StocksTab extends Component {
     let favoriteRef = database().ref(`${uid}/favorites/`);
     let favorites = [];
      await favoriteRef.once('value', (snapshot) => {
-      //setInitialPageRender(false);
       snapshot.forEach(function(childSnapshot) {
         console.log(childSnapshot.key);
         console.log(childSnapshot.val());
@@ -67,9 +81,7 @@ class StocksTab extends Component {
       try {
         let response = await fetch(apiFetchURL);
         let responseJson = await response.json();
-  
-        // List of "Quotes" -- to see what this is go to this sample API response:
-        // https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=aapl,tsla,ibm&token=Tpk_77a598a1fa804de592413ba39f6b137a&period=annual
+
         const quotes = Object.values(responseJson).map((stock) => stock.quote);
         const companyNames = quotes.map((quote) => quote.companyName);
         companyNamesAPI = companyNames;
@@ -167,6 +179,7 @@ class StocksTab extends Component {
 
     return (
       <Container style={styles.container}>
+        {/*<NavigationEvents onDidFocus={() => console.log('DID FOCUS')}/>*/}
         <Text>My Favorites</Text>
         <Content style={styles.context}>{favDisplay}</Content>
         <Text>All Stocks</Text>
