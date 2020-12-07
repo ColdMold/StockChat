@@ -15,6 +15,7 @@ class StocksTab extends Component {
 
   constructor(props) {
     super(props);
+    this.willFocusSubscription = null;
     this.state = {
       isLoading: false,
       // companyInfo is one big object holding the arrays of company information...might need to change this behavior to maybe having an array of "Company" objects each
@@ -31,10 +32,10 @@ class StocksTab extends Component {
   }
 
   componentDidMount() {
-    if (true) {
-      this.getStockCardData();
-      this.readFavorites();
-    }
+
+    this.getStockCardData();
+    this.readFavorites();
+  
 
     this.willFocusSubscription = this.props.navigation.addListener(
       'focus',
@@ -50,25 +51,14 @@ class StocksTab extends Component {
     this.willFocusSubscription.remove();
   }
 
-  componentDidUpdate(){
-    //this.readFavorites();
-  }
-
   async readFavorites() {
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
     console.log('reading favorites from DB');
     let uid = firebase.auth().currentUser.uid;
     let favoriteRef = database().ref(`${uid}/favorites/`);
     let favorites = [];
-     await favoriteRef.once('value', (snapshot) => {
-      snapshot.forEach(function(childSnapshot) {
-        console.log(childSnapshot.key);
-        console.log(childSnapshot.val());
-        if(childSnapshot.val() === true) {
-          favorites.push(childSnapshot.key);
-        }
-      });
-    });
+  
+    await favoriteRef.once('value', (snapshot) => snapshot.forEach((childSnapshot) => favorites.push(childSnapshot.key)));
 
     let companySymbolsAPI = favorites.join(',').toLowerCase();
       const apiFetchURL = `https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbolsAPI}&token=${api_key}`;
@@ -80,17 +70,18 @@ class StocksTab extends Component {
         const quotes = Object.values(responseJson).map((stock) => stock.quote);
         const companyNames = quotes.map((quote) => quote.companyName);
         companyNamesAPI = companyNames;
+
+        console.log("FAVORITES: " + favorites);
+        console.log("FAVORITE NAMES: " + companyNamesAPI);
+        this.setState({
+          favoritedCompanies: {
+            companyNames: companyNamesAPI,
+            companySymbols: favorites,
+          },
+        });
       } catch (error) {
         console.error(error);
       }
-      console.log("FAVORITES: " + favorites);
-      console.log("FAVORITE NAMES: " + companyNamesAPI);
-      this.setState({
-        favoritedCompanies: {
-          companyNames: companyNamesAPI,
-          companySymbols: favorites,
-        },
-      });
   }
   
   async getStockCardData() {
@@ -174,7 +165,6 @@ class StocksTab extends Component {
 
     return (
       <Container style={styles.container}>
-        {/*<NavigationEvents onDidFocus={() => console.log('DID FOCUS')}/>*/}
         <Text>My Favorites</Text>
         <Content style={styles.context}>{favDisplay}</Content>
         <Text>All Stocks</Text>
