@@ -34,18 +34,16 @@ class StocksTab extends Component {
   }
 
   componentDidMount() {
-    //NetInfo.isConnected.fetch().then(isConnected => {
     if (true) {
       this.getStockCardData();
       this.readFavorites();
     }
 
     this.willFocusSubscription = this.props.navigation.addListener(
-      'willFocus',
+      'focus',
       () => {
-        //this.readFavorites();
+        this.readFavorites();
         console.log("BACK BUTTON");
-        //THIS DOES NOT PRINT AS EXPECTED
       }
     );
 
