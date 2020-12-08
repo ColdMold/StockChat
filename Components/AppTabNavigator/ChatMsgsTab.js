@@ -25,6 +25,18 @@ class ChatMsgsTab extends Component {
 
   componentDidMount() {
     this.readFavorites();
+
+    this.willFocusSubscription = this.props.navigation.addListener(
+      'focus',
+      () => {
+        this.readFavorites();
+        console.log("BACK BUTTON");
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.willFocusSubscription.remove();
   }
 
   async readFavorites() {
