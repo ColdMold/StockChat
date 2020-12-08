@@ -3,6 +3,8 @@ import {View, StyleSheet} from 'react-native';
 
 import {Container, Content, Icon} from 'native-base';
 import {List, Title, Divider} from 'react-native-paper';
+import {firebase} from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
 
 class ChatMsgsTab extends Component {
   static navigationOptions = {
@@ -10,6 +12,34 @@ class ChatMsgsTab extends Component {
       <Icon name="android-messages" style={{color: tintColor}} />
     ),
   };
+
+  constructor(props) {
+    super(props);
+    this.willFocusSubscription = null;
+    this.state = {
+      favoritedCompanies: {
+        companySymbols: [],
+      },
+    };
+  }
+
+  componentDidMount() {
+    this.readFavorites();
+  }
+
+  async readFavorites() {
+    console.log('reading favorites from DB');
+    let uid = firebase.auth().currentUser.uid;
+    let favoriteRef = database().ref(`${uid}/favorites/`);
+    let favorites = [];
+  
+    await favoriteRef.once('value', (snapshot) => snapshot.forEach((childSnapshot) => favorites.push(childSnapshot.key)));
+    this.setState({
+      favoritedCompanies: {
+        companySymbols: favorites,
+      },
+    });
+  }
 
   render() {
     let lastMessage = 'Chat Last Message...';
@@ -38,7 +68,7 @@ class ChatMsgsTab extends Component {
 
   getChatRooms() {
     // TODO: Get this from a central location (same as everywhere else)
-    let companySymbolsArray = this.props.stocks;
+    let companySymbolsArray = this.state.favoritedCompanies.companySymbols;
     return companySymbolsArray;
   }
 
