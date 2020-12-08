@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {Card} from 'react-native-paper';
-
-import {View, StyleSheet} from 'react-native';
-
+import {View, StyleSheet, Text} from 'react-native';
 import {Container, Content, Icon} from 'native-base';
-import {HARDCODED_COMPANY_SYMBOLS_ARRAY} from '../Utils/Constants';
+import {firebase} from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
+
 
 class StocksTab extends Component {
   static navigationOptions = {
@@ -15,6 +15,7 @@ class StocksTab extends Component {
 
   constructor(props) {
     super(props);
+    this.willFocusSubscription = null;
     this.state = {
       isLoading: false,
       // companyInfo is one big object holding the arrays of company information...might need to change this behavior to maybe having an array of "Company" objects each
@@ -23,16 +24,66 @@ class StocksTab extends Component {
         companyNames: [],
         companySymbols: [],
       },
+      favoritedCompanies: {
+        companyNames: [],
+        companySymbols: [],
+      },
     };
   }
 
   componentDidMount() {
-    //NetInfo.isConnected.fetch().then(isConnected => {
-    if (true) {
-      this.getStockCardData();
-    }
+
+    this.getStockCardData();
+    this.readFavorites();
+  
+
+    this.willFocusSubscription = this.props.navigation.addListener(
+      'focus',
+      () => {
+        this.readFavorites();
+        console.log("BACK BUTTON");
+      }
+    );
+
   }
 
+  componentWillUnmount() {
+    this.willFocusSubscription.remove();
+  }
+
+  async readFavorites() {
+    let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
+    console.log('reading favorites from DB');
+    let uid = firebase.auth().currentUser.uid;
+    let favoriteRef = database().ref(`${uid}/favorites/`);
+    let favorites = [];
+  
+    await favoriteRef.once('value', (snapshot) => snapshot.forEach((childSnapshot) => favorites.push(childSnapshot.key)));
+
+    let companySymbolsAPI = favorites.join(',').toLowerCase();
+      const apiFetchURL = `https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbolsAPI}&token=${api_key}`;
+      let companyNamesAPI = [];
+      try {
+        let response = await fetch(apiFetchURL);
+        let responseJson = await response.json();
+
+        const quotes = Object.values(responseJson).map((stock) => stock.quote);
+        const companyNames = quotes.map((quote) => quote.companyName);
+        companyNamesAPI = companyNames;
+
+        console.log("FAVORITES: " + favorites);
+        console.log("FAVORITE NAMES: " + companyNamesAPI);
+        this.setState({
+          favoritedCompanies: {
+            companyNames: companyNamesAPI,
+            companySymbols: favorites,
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      }
+  }
+  
   async getStockCardData() {
     // Hard coded api_key. Will need to change this
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
@@ -55,7 +106,6 @@ class StocksTab extends Component {
       const quotes = Object.values(responseJson).map((stock) => stock.quote);
       const companyNames = quotes.map((quote) => quote.companyName);
       // We can just use the passed list of array symbols instead of this map. However, I'll leave this in here for now just in case.
-
       this.setState({
         companyInfo: {
           companyNames: companyNames,
@@ -82,6 +132,8 @@ class StocksTab extends Component {
     // State updates after the code runs. Will need to do more reading on using update callback or componentDidMount / Update.
     let companyNames = this.state.companyInfo.companyNames;
     let companySymbols = this.state.companyInfo.companySymbols;
+    let favCompNames = this.state.favoritedCompanies.companyNames;
+    let favCompSymbols = this.state.favoritedCompanies.companySymbols;
 
     let _this = this;
 
@@ -98,8 +150,24 @@ class StocksTab extends Component {
       );
     });
 
+    let favDisplay = favCompNames.map(function (compNames, index) {
+      const favCompSymbol = favCompSymbols[index];
+      return (
+        <View key={favCompSymbol}>
+          <Card
+            style={styles.card}
+            onPress={() => _this.navigateToPage(favCompSymbol, compNames)}>
+            <Card.Title title={favCompSymbol} subtitle={compNames} />
+          </Card>
+        </View>
+      );
+    });
+
     return (
       <Container style={styles.container}>
+        <Text>My Favorites</Text>
+        <Content style={styles.context}>{favDisplay}</Content>
+        <Text>All Stocks</Text>
         <Content style={styles.context}>{display}</Content>
       </Container>
     );
