@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
-import {Card} from 'react-native-paper';
+import {Card, List} from 'react-native-paper';
 import {View, StyleSheet, Text} from 'react-native';
 import {Container, Content, Icon} from 'native-base';
 import {firebase} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
+import {ScrollView} from 'react-native-gesture-handler';
+import {LinearGradient} from 'react-native-svg';
 
 class StocksTab extends Component {
   static navigationOptions = {
@@ -15,7 +17,13 @@ class StocksTab extends Component {
   constructor(props) {
     super(props);
 
-    this.willFocusSubscription = null;
+    this.willFocusSubscription = this.props.navigation.addListener(
+      'focus',
+      () => {
+        this.readFavorites();
+      },
+    );
+
     this.state = {
       isLoading: false,
       companyInfo: {
@@ -33,13 +41,14 @@ class StocksTab extends Component {
     this.getStockCardData();
     this.readFavorites();
 
-    this.willFocusSubscription = this.props.navigation.addListener(
-      'focus',
-      () => {
-        this.readFavorites();
-        console.log('BACK BUTTON');
-      },
-    );
+    if (this.willFocusSubscription === undefined) {
+      this.willFocusSubscription = this.props.navigation.addListener(
+        'focus',
+        () => {
+          this.readFavorites();
+        },
+      );
+    }
   }
 
   componentWillUnmount() {
@@ -125,8 +134,6 @@ class StocksTab extends Component {
   };
 
   render() {
-    // Use state because for some reason passing it in and accessing directly using array was undefined
-    // State updates after the code runs. Will need to do more reading on using update callback or componentDidMount / Update.
     let companyNames = this.state.companyInfo.companyNames;
     let companySymbols = this.state.companyInfo.companySymbols;
     let favCompNames = this.state.favoritedCompanies.companyNames;
@@ -134,38 +141,44 @@ class StocksTab extends Component {
 
     let _this = this;
 
-    let display = companyNames.map(function (companyName, index) {
-      const companySymbol = companySymbols[index];
-      return (
-        <View key={companySymbol}>
-          <Card
-            style={styles.card}
-            onPress={() => _this.navigateToPage(companySymbol, companyName)}>
-            <Card.Title title={companySymbol} subtitle={companyName} />
-          </Card>
-        </View>
-      );
-    });
+    let stocksAccordion = (
+      <List.Accordion title="Stocks" id="stocks">
+        {companyNames.map(function (companyName, index) {
+          const companySymbol = companySymbols[index];
+          return (
+            <Card
+              style={styles.card}
+              key={companySymbol}
+              onPress={() => _this.navigateToPage(companySymbol, companyName)}>
+              <Card.Title title={companySymbol} subtitle={companyName} />
+            </Card>
+          );
+        })}
+      </List.Accordion>
+    );
 
-    let favDisplay = favCompNames.map(function (compNames, index) {
-      const favCompSymbol = favCompSymbols[index];
-      return (
-        <View key={favCompSymbol}>
-          <Card
-            style={styles.card}
-            onPress={() => _this.navigateToPage(favCompSymbol, compNames)}>
-            <Card.Title title={favCompSymbol} subtitle={compNames} />
-          </Card>
-        </View>
-      );
-    });
+    let favAccordion = (
+      <List.Accordion title="Favorites" id="favorites">
+        {favCompNames.map((compName, index) => {
+          const favCompSymbol = favCompSymbols[index];
+          return (
+            <Card
+              key={favCompSymbol}
+              style={styles.card}
+              onPress={() => _this.navigateToPage(favCompSymbol, compName)}>
+              <Card.Title title={favCompSymbol} subtitle={compName} />
+            </Card>
+          );
+        })}
+      </List.Accordion>
+    );
 
     return (
       <Container style={styles.container}>
-        <Text>My Favorites</Text>
-        <Content style={styles.context}>{favDisplay}</Content>
-        <Text>All Stocks</Text>
-        <Content style={styles.context}>{display}</Content>
+        <ScrollView>
+          {favAccordion}
+          {stocksAccordion}
+        </ScrollView>
       </Container>
     );
   }
@@ -185,7 +198,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   card: {
-    borderWidth: 3,
-    margin: 2,
+    borderWidth: 2,
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 3,
+    marginBottom: 3,
   },
 });
