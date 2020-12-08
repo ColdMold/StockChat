@@ -26,7 +26,6 @@ import {firebase} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import Toast from 'react-native-simple-toast';
 
-
 export default function StockPage(props) {
   const [companySymbol, setCompanySymbol] = useState(
     props.route.params.companySymbol,
@@ -234,7 +233,7 @@ export default function StockPage(props) {
       companySymbol: companySymbol,
     });
   };
-  
+
   const favoritePressed = () => {
     setFavorited((prevFav) => !prevFav);
 
@@ -243,14 +242,14 @@ export default function StockPage(props) {
   };
 
   const joinChatPressed = () => {
-    if(favorited) {
-    //CORRECT ME IF IM WRONG BUT I DONT THINK THE FOLLOWING 3 LINES ARE NEEDED
-      //setChatJoined(!chatJoined);
-      //const action = chatJoined ? 'left' : 'joined';
-      //console.log(`You ${action} ${companySymbol} chat!`);
+    if (favorited) {
       navigateToChat();
     } else {
-      Toast.showWithGravity("You must favorite the stock to chat!", Toast.LONG, Toast.TOP);
+      Toast.showWithGravity(
+        'You must favorite the stock to chat!',
+        Toast.LONG,
+        Toast.TOP,
+      );
     }
   };
 
@@ -267,14 +266,10 @@ export default function StockPage(props) {
       switch (action) {
         case 'favorite':
           return favorited ? 'Remove Favorite' : 'Favorite';
-        //DONT NEED??
-        //case 'chat':
-          //return chatJoined ? 'Leave Chat' : 'Join Chat';
         case 'forum':
           return forumJoined ? 'Leave Forum' : 'Join Forum';
       }
     };
-
 
     return (
       <Banner
