@@ -5,7 +5,6 @@ import {Container, Content, Icon} from 'native-base';
 import {firebase} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 
-
 class StocksTab extends Component {
   static navigationOptions = {
     tabBarIcon: ({tintColor}) => (
@@ -15,11 +14,10 @@ class StocksTab extends Component {
 
   constructor(props) {
     super(props);
+
     this.willFocusSubscription = null;
     this.state = {
       isLoading: false,
-      // companyInfo is one big object holding the arrays of company information...might need to change this behavior to maybe having an array of "Company" objects each
-      // with their own individual properties.
       companyInfo: {
         companyNames: [],
         companySymbols: [],
@@ -32,19 +30,16 @@ class StocksTab extends Component {
   }
 
   componentDidMount() {
-
     this.getStockCardData();
     this.readFavorites();
-  
 
     this.willFocusSubscription = this.props.navigation.addListener(
       'focus',
       () => {
         this.readFavorites();
-        console.log("BACK BUTTON");
-      }
+        console.log('BACK BUTTON');
+      },
     );
-
   }
 
   componentWillUnmount() {
@@ -57,33 +52,35 @@ class StocksTab extends Component {
     let uid = firebase.auth().currentUser.uid;
     let favoriteRef = database().ref(`${uid}/favorites/`);
     let favorites = [];
-  
-    await favoriteRef.once('value', (snapshot) => snapshot.forEach((childSnapshot) => favorites.push(childSnapshot.key)));
+
+    await favoriteRef.once('value', (snapshot) =>
+      snapshot.forEach((childSnapshot) => favorites.push(childSnapshot.key)),
+    );
 
     let companySymbolsAPI = favorites.join(',').toLowerCase();
-      const apiFetchURL = `https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbolsAPI}&token=${api_key}`;
-      let companyNamesAPI = [];
-      try {
-        let response = await fetch(apiFetchURL);
-        let responseJson = await response.json();
+    const apiFetchURL = `https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbolsAPI}&token=${api_key}`;
+    let companyNamesAPI = [];
+    try {
+      let response = await fetch(apiFetchURL);
+      let responseJson = await response.json();
 
-        const quotes = Object.values(responseJson).map((stock) => stock.quote);
-        const companyNames = quotes.map((quote) => quote.companyName);
-        companyNamesAPI = companyNames;
+      const quotes = Object.values(responseJson).map((stock) => stock.quote);
+      const companyNames = quotes.map((quote) => quote.companyName);
+      companyNamesAPI = companyNames;
 
-        console.log("FAVORITES: " + favorites);
-        console.log("FAVORITE NAMES: " + companyNamesAPI);
-        this.setState({
-          favoritedCompanies: {
-            companyNames: companyNamesAPI,
-            companySymbols: favorites,
-          },
-        });
-      } catch (error) {
-        console.error(error);
-      }
+      console.log('FAVORITES: ' + favorites);
+      console.log('FAVORITE NAMES: ' + companyNamesAPI);
+      this.setState({
+        favoritedCompanies: {
+          companyNames: companyNamesAPI,
+          companySymbols: favorites,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
-  
+
   async getStockCardData() {
     // Hard coded api_key. Will need to change this
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';

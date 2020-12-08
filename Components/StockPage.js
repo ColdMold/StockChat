@@ -20,10 +20,11 @@ import {
   VictoryVoronoiContainer,
   VictoryTheme,
   VictoryAxis,
-  VictoryLabel,
+  VictoryLabel, 
 } from 'victory-native';
 import {firebase} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
+import Toast from 'react-native-simple-toast';
 
 export default function StockPage(props) {
   const [companySymbol, setCompanySymbol] = useState(
@@ -227,6 +228,12 @@ export default function StockPage(props) {
   // and whether or not a user is a part of a forum
   // DECIDE: Do we want to have separations between the stocks a user can
   // favorite and join chat / join forums?
+  const navigateToChat = () => {
+    props.navigation.navigate('ChatRoom', {
+      companySymbol: companySymbol,
+    });
+  };
+
   const favoritePressed = () => {
     setFavorited((prevFav) => !prevFav);
 
@@ -235,9 +242,15 @@ export default function StockPage(props) {
   };
 
   const joinChatPressed = () => {
-    setChatJoined(!chatJoined);
-    const action = chatJoined ? 'left' : 'joined';
-    console.log(`You ${action} ${companySymbol} chat!`);
+    if (favorited) {
+      navigateToChat();
+    } else {
+      Toast.showWithGravity(
+        'You must favorite the stock to chat!',
+        Toast.LONG,
+        Toast.TOP,
+      );
+    }
   };
 
   const joinForumPressed = () => {
@@ -253,17 +266,9 @@ export default function StockPage(props) {
       switch (action) {
         case 'favorite':
           return favorited ? 'Remove Favorite' : 'Favorite';
-        case 'chat':
-          return chatJoined ? 'Leave Chat' : 'Join Chat';
         case 'forum':
           return forumJoined ? 'Leave Forum' : 'Join Forum';
       }
-    };
-
-    const navigateToChat = () => {
-      props.navigation.navigate('ChatRoom', {
-        companySymbol: companySymbol,
-      });
     };
 
     return (
@@ -272,7 +277,7 @@ export default function StockPage(props) {
         actions={[
           {
             label: 'Chat',
-            onPress: () => navigateToChat(),
+            onPress: () => joinChatPressed(),
             mode: 'contained',
           },
           {
