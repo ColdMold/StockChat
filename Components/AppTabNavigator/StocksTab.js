@@ -67,7 +67,7 @@ class StocksTab extends Component {
     await favoriteRef.once('value', (snapshot) =>
       snapshot.forEach((childSnapshot) => favorites.push(childSnapshot.key)),
     );
-
+    
     let companySymbolsAPI = favorites.join(',').toLowerCase();
     const apiFetchURL = `https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbolsAPI}&token=${api_key}`;
     let companyNamesAPI = [];

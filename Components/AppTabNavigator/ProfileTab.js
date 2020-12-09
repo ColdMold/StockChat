@@ -39,9 +39,29 @@ export default function ProfileTab({navigation}) {
   const faqDisplay = () => {
     return (
       <Card>
-        <Card.Title title="Question 1" />
+        <Card.Title title="Why is there barely any stocks?"/>
         <Card.Content>
-          <Text>Answer to question 1</Text>
+          <Text>Due to current hardware limitations, our development team could not provide all the stocks. Stick with us!</Text>
+        </Card.Content>
+        <Card.Title title="Why are there gaps in some of my stocks graphs?" titleNumberOfLines={2} />
+        <Card.Content>
+          <Text>Because the API used in this app returns null for data points :(</Text>
+        </Card.Content>
+        <Card.Title title="Why can't I join a chat for a stock?" />
+        <Card.Content>
+          <Text>You must favorite a stock to be able to join the chat room for it!</Text>
+        </Card.Content>
+        <Card.Title title="Where are the forums?"/>
+        <Card.Content>
+          <Text>They are coming soon!</Text>
+        </Card.Content>
+        <Card.Title title="Why can't I make a post about my favorite stock?" titleNumberOfLines={2}/>
+        <Card.Content>
+          <Text>That would be cool, and you can do it soon!</Text>
+        </Card.Content>
+        <Card.Title title="How do I get my chat to update live?"/>
+        <Card.Content>
+          <Text>It's a small bug! Scroll up and down to update, or exit and re enter the chat for updates!</Text>
         </Card.Content>
       </Card>
     );
