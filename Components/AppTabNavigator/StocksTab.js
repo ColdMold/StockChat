@@ -71,15 +71,15 @@ class StocksTab extends Component {
     const apiFetchURL = `https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbolsAPI}&token=${api_key}`;
     let companyNamesAPI = [];
     try {
-      let response = await fetch(apiFetchURL);
-      let responseJson = await response.json();
+      if (favorites.length > 0) {
+        let response = await fetch(apiFetchURL);
+        let responseJson = await response.json();
 
-      const quotes = Object.values(responseJson).map((stock) => stock.quote);
-      const companyNames = quotes.map((quote) => quote.companyName);
-      companyNamesAPI = companyNames;
+        const quotes = Object.values(responseJson).map((stock) => stock.quote);
+        const companyNames = quotes.map((quote) => quote.companyName);
+        companyNamesAPI = companyNames;
+      }
 
-      console.log('FAVORITES: ' + favorites);
-      console.log('FAVORITE NAMES: ' + companyNamesAPI);
       this.setState({
         favoritedCompanies: {
           companyNames: companyNamesAPI,
@@ -143,7 +143,11 @@ class StocksTab extends Component {
     let _this = this;
 
     let stocksAccordion = (
-      <List.Accordion title="Stocks" id="stocks" expanded={_this.state.isExpanded} onPress={() => _this.setState(!isExpanded)}>
+      <List.Accordion
+        title="Stocks"
+        id="stocks"
+        expanded={_this.state.isExpanded}
+        onPress={() => _this.setState({isExpanded: !_this.state.isExpanded})}>
         {companyNames.map(function (companyName, index) {
           const companySymbol = companySymbols[index];
           return (
@@ -159,7 +163,11 @@ class StocksTab extends Component {
     );
 
     let favAccordion = (
-      <List.Accordion title="Favorites" id="favorites" expanded={_this.state.isExpanded} onPress={() => _this.setState(!isExpanded)}>
+      <List.Accordion
+        title="Favorites"
+        id="favorites"
+        expanded={_this.state.isExpanded}
+        onPress={() => _this.setState({isExpanded: !_this.state.isExpanded})}>
         {favCompNames.map((compName, index) => {
           const favCompSymbol = favCompSymbols[index];
           return (
