@@ -47,6 +47,7 @@ class ChatMsgsTab extends Component {
     await favoriteRef.once('value', (snapshot) =>
       snapshot.forEach((childSnapshot) => favorites.push(childSnapshot.key)),
     );
+
     this.setState({
       favoritedCompanies: {
         companySymbols: favorites,
