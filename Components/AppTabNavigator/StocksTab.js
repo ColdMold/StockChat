@@ -67,20 +67,20 @@ class StocksTab extends Component {
     await favoriteRef.once('value', (snapshot) =>
       snapshot.forEach((childSnapshot) => favorites.push(childSnapshot.key)),
     );
-
+    
     let companySymbolsAPI = favorites.join(',').toLowerCase();
     const apiFetchURL = `https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbolsAPI}&token=${api_key}`;
     let companyNamesAPI = [];
     try {
-      let response = await fetch(apiFetchURL);
-      let responseJson = await response.json();
+      if (favorites.length > 0) {
+        let response = await fetch(apiFetchURL);
+        let responseJson = await response.json();
 
-      const quotes = Object.values(responseJson).map((stock) => stock.quote);
-      const companyNames = quotes.map((quote) => quote.companyName);
-      companyNamesAPI = companyNames;
+        const quotes = Object.values(responseJson).map((stock) => stock.quote);
+        const companyNames = quotes.map((quote) => quote.companyName);
+        companyNamesAPI = companyNames;
+      }
 
-      console.log('FAVORITES: ' + favorites);
-      console.log('FAVORITE NAMES: ' + companyNamesAPI);
       this.setState({
         favoritedCompanies: {
           companyNames: companyNamesAPI,
@@ -144,7 +144,13 @@ class StocksTab extends Component {
     let _this = this;
 
     let stocksAccordion = (
-      <List.Accordion title="Stocks" id="stocks" expanded={this.state.isStocksExpanded} onPress={() => this.setState({isStocksExpanded: !this.state.isStocksExpanded})}>
+      <List.Accordion
+        title="Stocks"
+        id="stocks"
+        expanded={this.state.isStocksExpanded}
+        onPress={() =>
+          this.setState({isStocksExpanded: !this.state.isStocksExpanded})
+        }>
         {companyNames.map(function (companyName, index) {
           const companySymbol = companySymbols[index];
           return (
@@ -160,7 +166,13 @@ class StocksTab extends Component {
     );
 
     let favAccordion = (
-      <List.Accordion title="Favorites" id="favorites" expanded={this.state.isFavoritesExpanded} onPress={() => this.setState({isFavoritesExpanded: !this.state.isFavoritesExpanded})}>
+      <List.Accordion
+        title="Favorites"
+        id="favorites"
+        expanded={this.state.isFavoritesExpanded}
+        onPress={() =>
+          this.setState({isFavoritesExpanded: !this.state.isFavoritesExpanded})
+        }>
         {favCompNames.map((compName, index) => {
           const favCompSymbol = favCompSymbols[index];
           return (
