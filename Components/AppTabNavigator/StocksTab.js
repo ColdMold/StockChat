@@ -26,7 +26,8 @@ class StocksTab extends Component {
 
     this.state = {
       isLoading: false,
-      isExpanded: true,
+      isFavoritesExpanded: true,
+      isStocksExpanded: true,
       companyInfo: {
         companyNames: [],
         companySymbols: [],
@@ -146,8 +147,10 @@ class StocksTab extends Component {
       <List.Accordion
         title="Stocks"
         id="stocks"
-        expanded={_this.state.isExpanded}
-        onPress={() => _this.setState({isExpanded: !_this.state.isExpanded})}>
+        expanded={this.state.isStocksExpanded}
+        onPress={() =>
+          this.setState({isStocksExpanded: !this.state.isStocksExpanded})
+        }>
         {companyNames.map(function (companyName, index) {
           const companySymbol = companySymbols[index];
           return (
@@ -166,8 +169,10 @@ class StocksTab extends Component {
       <List.Accordion
         title="Favorites"
         id="favorites"
-        expanded={_this.state.isExpanded}
-        onPress={() => _this.setState({isExpanded: !_this.state.isExpanded})}>
+        expanded={this.state.isFavoritesExpanded}
+        onPress={() =>
+          this.setState({isFavoritesExpanded: !this.state.isFavoritesExpanded})
+        }>
         {favCompNames.map((compName, index) => {
           const favCompSymbol = favCompSymbols[index];
           return (
