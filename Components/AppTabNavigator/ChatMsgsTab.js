@@ -9,7 +9,7 @@ import database from '@react-native-firebase/database';
 class ChatMsgsTab extends Component {
   static navigationOptions = {
     tabBarIcon: ({tintColor}) => (
-      <Icon name="android-messages" style={{color: tintColor}} />
+      <Icon name="chat" style={{color: tintColor}} />
     ),
   };
 
@@ -30,8 +30,7 @@ class ChatMsgsTab extends Component {
       'focus',
       () => {
         this.readFavorites();
-        console.log("BACK BUTTON");
-      }
+      },
     );
   }
 
@@ -44,8 +43,10 @@ class ChatMsgsTab extends Component {
     let uid = firebase.auth().currentUser.uid;
     let favoriteRef = database().ref(`${uid}/favorites/`);
     let favorites = [];
-  
-    await favoriteRef.once('value', (snapshot) => snapshot.forEach((childSnapshot) => favorites.push(childSnapshot.key)));
+
+    await favoriteRef.once('value', (snapshot) =>
+      snapshot.forEach((childSnapshot) => favorites.push(childSnapshot.key)),
+    );
     this.setState({
       favoritedCompanies: {
         companySymbols: favorites,
