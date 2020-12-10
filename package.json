@@ -10,8 +10,6 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@ant-design/icons": "^4.3.0",
-    "@expo/vector-icons": "^10.0.0",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-firebase/app": "^8.4.7",
     "@react-native-firebase/auth": "^9.3.5",
@@ -25,7 +23,6 @@
     "react-native": "0.63.2",
     "react-native-gesture-handler": "~1.7.0",
     "react-native-gifted-chat": "^0.16.3",
-    "react-native-material-design": "^0.3.7",
     "react-native-paper": "^4.4.0",
     "react-native-safe-area-context": "3.1.4",
     "react-native-screens": "~2.10.1",
