@@ -43,10 +43,7 @@ export default function StockPage(props) {
     const advStatsFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/advanced-stats?token=${sandbox_api_key}`;
     const companyInfoFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/company?token=${sandbox_api_key}`;
     const companyIntradayURL = `https://cloud.iexapis.com/stable/stock/${companySymbol}/intraday-prices?token=${cloud_api_key}&chartLast=390`;
-    console.log('intradayURL: ' + companyIntradayURL);
-    console.log('advStatsURL: ' + advStatsFetchURL);
-    console.log('companyInfoURL: ' + companyInfoFetchURL);
-
+  
     let advStatsJson = [];
     let companyInfoJson = [];
     let intradayJson = [];
