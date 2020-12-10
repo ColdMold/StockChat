@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
 import {Card, List} from 'react-native-paper';
 import {StyleSheet} from 'react-native';
-import {Container, Content, Icon} from 'native-base';
+import {Container, Icon} from 'native-base';
 import {firebase} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import {ScrollView} from 'react-native-gesture-handler';
-
 
 class StocksTab extends Component {
   static navigationOptions = {
@@ -51,7 +50,7 @@ class StocksTab extends Component {
     await favoriteRef.once('value', (snapshot) =>
       snapshot.forEach((childSnapshot) => favorites.push(childSnapshot.key)),
     );
-    
+
     let companySymbolsAPI = favorites.join(',').toLowerCase();
     const apiFetchURL = `https://sandbox.iexapis.com/stable/stock/market/batch?&types=quote&symbols=${companySymbolsAPI}&token=${api_key}`;
     let companyNamesAPI = [];

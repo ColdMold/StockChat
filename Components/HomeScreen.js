@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
 import StocksTab from './AppTabNavigator/StocksTab';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -11,9 +11,7 @@ import {HARDCODED_COMPANY_SYMBOLS_ARRAY, TAB_NAMES} from './Utils/Constants';
 const Tab = createBottomTabNavigator();
 
 export default function HomeScreen(props) {
-  const [companySymbolsArray] = useState(
-    HARDCODED_COMPANY_SYMBOLS_ARRAY,
-  );
+  const [companySymbolsArray] = useState(HARDCODED_COMPANY_SYMBOLS_ARRAY);
 
   return (
     <Tab.Navigator>

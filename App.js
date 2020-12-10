@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, Button, LayoutAnimation} from 'react-native';
+import {StyleSheet} from 'react-native';
 
 import Providers from './Navigation/index';
 

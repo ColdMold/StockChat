@@ -87,7 +87,7 @@ class ChatMsgsTab extends Component {
 
   chatRoomPressed(symbol) {
     // Will open up to chat room view.
-    
+
     const {navigation} = this.props;
 
     navigation.navigate('ChatRoom', {

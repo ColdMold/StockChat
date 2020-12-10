@@ -1,11 +1,11 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import {Title, List, Banner, Paragraph, Card} from 'react-native-paper';
+import {Title, Banner, Card} from 'react-native-paper';
 import {AuthContext} from '../../Navigation/AuthProvider';
 import {Container, Content} from 'native-base';
 
 export default function ProfileTab({navigation}) {
-  const {logout, user, setUser} = useContext(AuthContext);
+  const {logout, user} = useContext(AuthContext);
 
   const bannerDisplay = () => {
     return (
@@ -95,10 +95,6 @@ export default function ProfileTab({navigation}) {
       </View>
     );
   };
-
-  function onAuthStateChanged(user) {
-    setUser(user);
-  }
 
   return (
     <Container style={styles.container}>
