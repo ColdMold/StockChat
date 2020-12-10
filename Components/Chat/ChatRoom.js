@@ -107,16 +107,12 @@ export default function ChatRoom(props) {
             _id: userId,
             name: 'testUsername',
           },
-        })
-        // Remove logging here
-        .then(() => console.log(message));
+        });
     },
     [companySymbol, userId],
   );
 
   const renderBubble = (bubbleProps) => {
-    // let username = props.currentMessage.user.name;
-
     return (
       <View>
         <Bubble

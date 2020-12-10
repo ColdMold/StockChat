@@ -35,9 +35,7 @@ export const AuthProvider = ({ children }) => {
           forgotPass: async (email) => {
               await auth().sendPasswordResetEmail(email).catch(error => {
                 alert(error);
-              });
-              console.log("email sent");
-            
+              });          
           }
         }}
       >

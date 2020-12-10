@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import {
     View,
-    Text,
     StyleSheet
 } from "react-native";
 
@@ -26,16 +25,8 @@ class HomeTab extends Component {
     }
 
     componentDidMount() {
-        //NetInfo.isConnected.fetch().then(isConnected => {
-            if (true) {
-                this.setState({isConnected: true})
-                this.getHomeScreenData();
-            } else {
-                this.setState({
-                    isLoading: false
-                })
-            }
-        //})
+        this.setState({isConnected: true})
+        this.getHomeScreenData();
     }
 
     async getHomeScreenData() {

@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {Card, List} from 'react-native-paper';
-import {View, StyleSheet, Text} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {Container, Content, Icon} from 'native-base';
 import {firebase} from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import {ScrollView} from 'react-native-gesture-handler';
-import {LinearGradient} from 'react-native-svg';
+
 
 class StocksTab extends Component {
   static navigationOptions = {
@@ -59,7 +59,6 @@ class StocksTab extends Component {
 
   async readFavorites() {
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
-    console.log('reading favorites from DB');
     let uid = firebase.auth().currentUser.uid;
     let favoriteRef = database().ref(`${uid}/favorites/`);
     let favorites = [];

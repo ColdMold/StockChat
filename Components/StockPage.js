@@ -4,19 +4,14 @@ import {Container, Content} from 'native-base';
 import {
   DataTable,
   Title,
-  Button,
   Banner,
   Card,
-  Paragraph,
-  List,
 } from 'react-native-paper';
 import compactFormat from 'cldr-compact-number';
 import {Dimensions} from 'react-native';
 import {
   VictoryChart,
   VictoryLine,
-  VictoryContainer,
-  VictoryTooltip,
   VictoryVoronoiContainer,
   VictoryTheme,
   VictoryAxis,
@@ -27,14 +22,13 @@ import database from '@react-native-firebase/database';
 import Toast from 'react-native-simple-toast';
 
 export default function StockPage(props) {
-  const [companySymbol, setCompanySymbol] = useState(
+  const [companySymbol] = useState(
     props.route.params.companySymbol,
   );
-  const [companyName, setCompanyName] = useState(
+  const [companyName] = useState(
     props.route.params.companyName,
   );
   const [favorited, setFavorited] = useState(false);
-  const [chatJoined, setChatJoined] = useState(false);
   const [forumJoined, setForumJoined] = useState(false);
   const [fullTextShown, setFullTextShown] = useState(false);
   const [showMoreShown, setShowMoreShown] = useState(false);
@@ -89,7 +83,6 @@ export default function StockPage(props) {
   // No dependency array, so this hook will act like ComponentDidMount()
   // We want to have a live update eventually on the graph (when graph is implemented)
   useEffect(() => {
-    console.log('useEffect1');
     let isMounted = true;
 
     let sandbox_api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
@@ -120,8 +113,6 @@ export default function StockPage(props) {
   };
 
   useEffect(() => {
-    console.log('useEffect 2');
-
     let isMounted = true;
     if (isMounted) {
       pushOrRemove();
@@ -133,7 +124,6 @@ export default function StockPage(props) {
   }, [favorited]);
 
   const pushOrRemove = () => {
-    console.log(favorited + 'USE EFFECT');
     let uid = firebase.auth().currentUser.uid;
 
     if (!initialPageRender) {
@@ -146,17 +136,14 @@ export default function StockPage(props) {
   };
 
   const pushFavoriteDB = (uid) => {
-    console.log('pushing favorite to DB');
     database()
       .ref(`${uid}/favorites`)
       .update({
         [companySymbol]: true,
       });
-    console.log('successful push to db');
   };
 
   const removeFavoriteDB = (uid) => {
-    console.log('removing favorite from DB');
     database()
       .ref(`${uid}/favorites`)
       .update({
@@ -168,7 +155,7 @@ export default function StockPage(props) {
     // Right now this logs 3 times, I think because of
     // All 3 loadResponse calls being in the same method
     // Corresponding with 3 separate rerenders
-    console.log('chartDisplay');
+      //console.log('chartDisplay');
 
     const getDomain = () => {
       const averagePrices = companyIntradayData

@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import { Title, List, Banner, Paragraph, Card } from 'react-native-paper';
+import React from 'react';
+import { StyleSheet, Text } from 'react-native';
+import { Paragraph } from 'react-native-paper';
 
 import {Container, Content} from 'native-base';
 
-export default function AboutUsScreen({ navigation }) {
+export default function AboutUsScreen() {
 
     return(
         <Container>
@@ -26,12 +26,6 @@ export default function AboutUsScreen({ navigation }) {
             </Content>
         </Container>
       );
-
-      /*
-      <Banner>visible={true}
-                    <Title style={styles.title}>About StockChat</Title>
-                </Banner>
-                */
 }
 
 
