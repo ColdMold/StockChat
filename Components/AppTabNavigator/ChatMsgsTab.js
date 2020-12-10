@@ -35,7 +35,9 @@ class ChatMsgsTab extends Component {
   }
 
   componentWillUnmount() {
-    this.willFocusSubscription.remove();
+    if (this.willFocusSubscription) {
+      this.willFocusSubscription();
+    }
   }
 
   async readFavorites() {

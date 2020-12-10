@@ -39,7 +39,11 @@ class StocksTab extends Component {
   }
 
   componentDidMount = () => this.getStockCardData();
-  componentWillUnmount = () => this.willFocusSubscription();
+  componentWillUnmount() {
+    if (this.willFocusSubscription) {
+      this.willFocusSubscription();
+    }
+  }
 
   async readFavorites() {
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
