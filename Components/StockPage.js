@@ -1,22 +1,12 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import {Container, Content} from 'native-base';
-import {
-  DataTable,
-  Title,
-  Button,
-  Banner,
-  Card,
-  Paragraph,
-  List,
-} from 'react-native-paper';
+import {DataTable, Title, Banner, Card} from 'react-native-paper';
 import compactFormat from 'cldr-compact-number';
 import {Dimensions} from 'react-native';
 import {
   VictoryChart,
   VictoryLine,
-  VictoryContainer,
-  VictoryTooltip,
   VictoryVoronoiContainer,
   VictoryTheme,
   VictoryAxis,
@@ -27,14 +17,9 @@ import database from '@react-native-firebase/database';
 import Toast from 'react-native-simple-toast';
 
 export default function StockPage(props) {
-  const [companySymbol, setCompanySymbol] = useState(
-    props.route.params.companySymbol,
-  );
-  const [companyName, setCompanyName] = useState(
-    props.route.params.companyName,
-  );
+  const [companySymbol] = useState(props.route.params.companySymbol);
+  const [companyName] = useState(props.route.params.companyName);
   const [favorited, setFavorited] = useState(false);
-  const [chatJoined, setChatJoined] = useState(false);
   const [forumJoined, setForumJoined] = useState(false);
   const [fullTextShown, setFullTextShown] = useState(false);
   const [showMoreShown, setShowMoreShown] = useState(false);
@@ -49,9 +34,6 @@ export default function StockPage(props) {
     const advStatsFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/advanced-stats?token=${sandbox_api_key}`;
     const companyInfoFetchURL = `https://sandbox.iexapis.com/stable/stock/${companySymbol}/company?token=${sandbox_api_key}`;
     const companyIntradayURL = `https://cloud.iexapis.com/stable/stock/${companySymbol}/intraday-prices?token=${cloud_api_key}&chartLast=390`;
-    console.log('intradayURL: ' + companyIntradayURL);
-    console.log('advStatsURL: ' + advStatsFetchURL);
-    console.log('companyInfoURL: ' + companyInfoFetchURL);
 
     let advStatsJson = [];
     let companyInfoJson = [];
@@ -89,7 +71,6 @@ export default function StockPage(props) {
   // No dependency array, so this hook will act like ComponentDidMount()
   // We want to have a live update eventually on the graph (when graph is implemented)
   useEffect(() => {
-    console.log('useEffect1');
     let isMounted = true;
 
     let sandbox_api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
@@ -107,12 +88,10 @@ export default function StockPage(props) {
 
   //trying to read favorites from DB on launch
   const readFavoritesFromDB = () => {
-    console.log('reading favorites from DB');
     let uid = firebase.auth().currentUser.uid;
     let favoriteRef = database().ref(`${uid}/favorites/${companySymbol}`);
     favoriteRef.once('value', (snapshot) => {
       setInitialPageRender(false);
-      console.log('Favorited on read from DB? ' + snapshot.val());
       if (snapshot.val() !== null) {
         setFavorited(snapshot.val());
       }
@@ -120,8 +99,6 @@ export default function StockPage(props) {
   };
 
   useEffect(() => {
-    console.log('useEffect 2');
-
     let isMounted = true;
     if (isMounted) {
       pushOrRemove();
@@ -133,7 +110,6 @@ export default function StockPage(props) {
   }, [favorited]);
 
   const pushOrRemove = () => {
-    console.log(favorited + 'USE EFFECT');
     let uid = firebase.auth().currentUser.uid;
 
     if (!initialPageRender) {
@@ -146,17 +122,14 @@ export default function StockPage(props) {
   };
 
   const pushFavoriteDB = (uid) => {
-    console.log('pushing favorite to DB');
     database()
       .ref(`${uid}/favorites`)
       .update({
         [companySymbol]: true,
       });
-    console.log('successful push to db');
   };
 
   const removeFavoriteDB = (uid) => {
-    console.log('removing favorite from DB');
     database()
       .ref(`${uid}/favorites`)
       .update({
@@ -168,7 +141,7 @@ export default function StockPage(props) {
     // Right now this logs 3 times, I think because of
     // All 3 loadResponse calls being in the same method
     // Corresponding with 3 separate rerenders
-    console.log('chartDisplay');
+    //console.log('chartDisplay');
 
     const getDomain = () => {
       const averagePrices = companyIntradayData
@@ -236,9 +209,6 @@ export default function StockPage(props) {
 
   const favoritePressed = () => {
     setFavorited((prevFav) => !prevFav);
-
-    const action = favorited ? 'removed from' : 'added to';
-    console.log(`${companySymbol} ${action} Favorites!`);
   };
 
   const joinChatPressed = () => {
@@ -255,12 +225,9 @@ export default function StockPage(props) {
 
   const joinForumPressed = () => {
     setForumJoined(!forumJoined);
-    const action = forumJoined ? 'left' : 'joined';
-    console.log(`You ${action} ${companySymbol} forum!`);
   };
 
   const bannerDisplay = () => {
-    console.log('bannerDisplay()');
     // Main Rendering Return for the Functional Component
     const getActionLabel = (action) => {
       switch (action) {
@@ -307,8 +274,6 @@ export default function StockPage(props) {
   //    help user discern between categories and values.
   // 5. Add expansion if a user wants to view "more stats".
   const dataTableDisplay = () => {
-    console.log('dataTableDisplay()');
-
     return (
       <DataTable>
         <DataTable.Header>
@@ -413,8 +378,6 @@ export default function StockPage(props) {
   };
 
   const descriptionTextDisplay = () => {
-    console.log('descriptionTextDisplay()');
-
     return (
       <Card>
         <Card.Title title="About" />

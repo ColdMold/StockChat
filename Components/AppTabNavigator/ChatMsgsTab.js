@@ -39,7 +39,6 @@ class ChatMsgsTab extends Component {
   }
 
   async readFavorites() {
-    console.log('reading favorites from DB');
     let uid = firebase.auth().currentUser.uid;
     let favoriteRef = database().ref(`${uid}/favorites/`);
     let favorites = [];
@@ -88,8 +87,7 @@ class ChatMsgsTab extends Component {
 
   chatRoomPressed(symbol) {
     // Will open up to chat room view.
-    console.log('Opening ' + symbol + ' Chat Room');
-
+    
     const {navigation} = this.props;
 
     navigation.navigate('ChatRoom', {

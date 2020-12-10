@@ -38,7 +38,6 @@ export default function ChatRoom(props) {
   // WHAT we're grabbing (console.log('fetching user id from firebase auth'))
   // So we can see if we do things a redundant amount of times
   const getUserId = () => {
-    console.log('getting user id in ChatRoom from: ' + 'firebase.auth()');
     return firebase.auth().currentUser.uid;
   };
 
@@ -56,7 +55,6 @@ export default function ChatRoom(props) {
     loadMessages(messagesRef, loadedMessages);
 
     return () => {
-      console.log('useEffect Return:');
       messagesRef.off();
     };
   }, []);
@@ -96,7 +94,6 @@ export default function ChatRoom(props) {
       // Upon clicking send, the message is uploaded to firebase RTDB
       // as a tree under (if AAPL is the company chat room)
       // AAPLMessages/MessageId/...
-      console.log(`${companySymbol} Chat Room Uploading Messages`);
       const newMessage = database()
         .ref(`/${companySymbol}Messages/${message[0]._id}`)
         .set({
@@ -107,16 +104,12 @@ export default function ChatRoom(props) {
             _id: userId,
             name: 'testUsername',
           },
-        })
-        // Remove logging here
-        .then(() => console.log(message));
+        });
     },
     [companySymbol, userId],
   );
 
   const renderBubble = (bubbleProps) => {
-    // let username = props.currentMessage.user.name;
-
     return (
       <View>
         <Bubble
