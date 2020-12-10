@@ -100,12 +100,10 @@ export default function StockPage(props) {
 
   //trying to read favorites from DB on launch
   const readFavoritesFromDB = () => {
-    console.log('reading favorites from DB');
     let uid = firebase.auth().currentUser.uid;
     let favoriteRef = database().ref(`${uid}/favorites/${companySymbol}`);
     favoriteRef.once('value', (snapshot) => {
       setInitialPageRender(false);
-      console.log('Favorited on read from DB? ' + snapshot.val());
       if (snapshot.val() !== null) {
         setFavorited(snapshot.val());
       }
@@ -223,9 +221,6 @@ export default function StockPage(props) {
 
   const favoritePressed = () => {
     setFavorited((prevFav) => !prevFav);
-
-    const action = favorited ? 'removed from' : 'added to';
-    console.log(`${companySymbol} ${action} Favorites!`);
   };
 
   const joinChatPressed = () => {
@@ -242,12 +237,9 @@ export default function StockPage(props) {
 
   const joinForumPressed = () => {
     setForumJoined(!forumJoined);
-    const action = forumJoined ? 'left' : 'joined';
-    console.log(`You ${action} ${companySymbol} forum!`);
   };
 
   const bannerDisplay = () => {
-    console.log('bannerDisplay()');
     // Main Rendering Return for the Functional Component
     const getActionLabel = (action) => {
       switch (action) {
@@ -294,8 +286,6 @@ export default function StockPage(props) {
   //    help user discern between categories and values.
   // 5. Add expansion if a user wants to view "more stats".
   const dataTableDisplay = () => {
-    console.log('dataTableDisplay()');
-
     return (
       <DataTable>
         <DataTable.Header>
@@ -400,8 +390,6 @@ export default function StockPage(props) {
   };
 
   const descriptionTextDisplay = () => {
-    console.log('descriptionTextDisplay()');
-
     return (
       <Card>
         <Card.Title title="About" />

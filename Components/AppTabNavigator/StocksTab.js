@@ -126,8 +126,6 @@ class StocksTab extends Component {
 
   navigateToPage = (companySymbol, companyName) => {
     const {navigation} = this.props;
-    console.log(companySymbol + ' | ' + companyName);
-
     navigation.navigate('StockPage', {
       companySymbol: companySymbol,
       companyName: companyName,
