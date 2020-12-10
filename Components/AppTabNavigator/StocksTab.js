@@ -39,23 +39,8 @@ class StocksTab extends Component {
     };
   }
 
-  componentDidMount() {
-    this.getStockCardData();
-    this.readFavorites();
-
-    if (this.willFocusSubscription === undefined) {
-      this.willFocusSubscription = this.props.navigation.addListener(
-        'focus',
-        () => {
-          this.readFavorites();
-        },
-      );
-    }
-  }
-
-  componentWillUnmount() {
-    this.willFocusSubscription.remove();
-  }
+  componentDidMount = () => this.getStockCardData();
+  componentWillUnmount = () => this.willFocusSubscription();
 
   async readFavorites() {
     let api_key = 'Tpk_77a598a1fa804de592413ba39f6b137a';
